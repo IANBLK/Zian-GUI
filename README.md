@@ -44,3 +44,9 @@ Comandos, permisos y ejemplos de menús se añadirán al implementar sus fases.
 La instalación obligatoria en ambos lados se comprobará mediante el protocolo
 requerido de red desde la fase de networking; `side="BOTH"` en las dependencias
 por sí solo no impide que un cliente sin este mod se conecte a esta base.
+
+## Convención de comandos
+
+La raíz prevista es `/ZianGui` (respetando mayúsculas), con las secciones `open`, `reload`, `list`, `edit` y `check`. Esta base 0.0.1 todavía no registra comandos: la constante compartida y los documentos fijan el nombre para su implementación. Los permisos `zian.gui.*` y las rutas de configuración conservan sus nombres.
+
+Las integraciones deben usar `/ZianUtilities` para Utilities y `/ZianGTS` para GTS. No se usará `/zgui` como raíz del mod.

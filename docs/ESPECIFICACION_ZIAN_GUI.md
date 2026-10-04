@@ -22,7 +22,7 @@ Ejemplos de botones: `/pc`, `/healpokemon` (Cobblemon); `/spawn`, `/warp`, `/rtp
 | Instalación | Mod **obligatorio en servidor y cliente** (`side="BOTH"`) |
 | Autoridad | **El servidor decide todo.** El cliente solo dibuja y reporta clics |
 | Permisos | LuckPerms, consultado desde el servidor |
-| Config | Archivos JSON en `config/zian_gui/menus/`, recargables con `/zgui reload` |
+| Config | Archivos JSON en `config/zian_gui/menus/`, recargables con `/ZianGui reload` |
 
 ## 3. Paso 0 (antes de escribir código nuevo)
 
@@ -39,7 +39,7 @@ Decisión a documentar tras la revisión: **copiar** esas clases dentro de Zian 
 ```
 Cliente                                   Servidor (Youer)
 -------                                   ----------------
-Keybind / /zgui open ───────────────────► RequestOpenPayload(menuId)
+Keybind / /ZianGui open ───────────────────► RequestOpenPayload(menuId)
                                           · valida permiso del menú
                                           · filtra botones por permiso
 ◄─────────────── OpenMenuPayload(layout + botones visibles)
@@ -100,7 +100,7 @@ zian-gui/
    │  │   ├─ PermissionService.java    consulta de permisos
    │  │   ├─ CommandBridge.java        ejecución de comandos
    │  │   ├─ ActionRunner.java         player_command, console_command, open_menu, message, sound, close
-   │  │   └─ ZianGuiCommand.java       /zgui open|reload|list  y alias /menu
+   │  │   └─ ZianGuiCommand.java       /ZianGui open|reload|list  y alias /menu
    │  ├─ client/
    │  │   ├─ ClientSetup.java          keybind, registro de pantalla
    │  │   ├─ ZianGuiScreen.java        pantalla (usa la UI de ZianRCT)
@@ -217,7 +217,7 @@ Reglas y avisos:
 
 **Editor en juego (solo admins).**
 
-- Se abre desde la propia pantalla (botón "Editar", visible solo con el permiso `zian.gui.edit` u op 4) o con `/zgui edit <menú>`.
+- Se abre desde la propia pantalla (botón "Editar", visible solo con el permiso `zian.gui.edit` u op 4) o con `/ZianGui edit <menú>`.
 - Campos: nombre, icono (selector con los iconos del mod y búsqueda de items), permiso (opcional), posición en la grilla, cooldown, y lista de comandos con selector `as` (`player` / `player_op` / `console`).
 - Flujo: el cliente envía `EditButtonPayload` → el servidor **verifica el permiso de admin**, valida (ids únicos, posición libre, longitud de textos, `as` válido) → escribe el JSON → recarga el menú → responde con `EditorResultPayload`. El cliente nunca escribe archivos.
 - Cada alta, edición o borrado se registra en el log con el nombre del admin.
@@ -268,7 +268,7 @@ Variantes de condición por botón (todas opcionales; si hay varias, deben cumpl
 
 **Sin LuckPerms o sin proveedor de permisos.** Orden de resolución en `PermissionService`: (1) `hasPermission` de Bukkit (LuckPerms plugin en Youer) → (2) `PermissionAPI` de NeoForge si existe en la versión usada (verificar) → (3) nivel de op `fallback_op_level` (por defecto 2). Con el respaldo, los botones con permiso quedan solo para ops y los botones sin permiso siguen abiertos a todos.
 
-**Depuración.** Comando `/zgui check <jugador> <menú> <botón>` (permiso `zian.gui.reload` u op) que indica qué nodos evaluó, el resultado de cada uno, el estado final del botón y qué proveedor de permisos respondió. Evita adivinar por qué un botón sale bloqueado.
+**Depuración.** Comando `/ZianGui check <jugador> <menú> <botón>` (permiso `zian.gui.reload` u op) que indica qué nodos evaluó, el resultado de cada uno, el estado final del botón y qué proveedor de permisos respondió. Evita adivinar por qué un botón sale bloqueado.
 
 ## 8. Permisos y ejecución de comandos en Youer
 
@@ -296,7 +296,7 @@ Lista inicial:
 ## 10. Apertura del menú
 
 - Keybind configurable en cliente (por defecto una tecla libre; **verificar que no choque** con los keybinds de ZianRCT/Cobblemon).
-- Comandos: `/zgui open <menú> [jugador]`, `/zgui reload`, `/zgui list`, alias `/menu`.
+- Comandos: `/ZianGui open <menú> [jugador]`, `/ZianGui reload`, `/ZianGui list`, alias `/menu`.
 - Un botón puede abrir otro menú (`open_menu`), con botón "Atrás" automático opcional.
 
 ## 11. Compatibilidad y empaquetado
@@ -312,9 +312,9 @@ Lista inicial:
 |---|---|---|
 | 0 | Revisión de ZianRCT, decisión copiar vs librería | Hay lista de clases UI a reutilizar |
 | 1 | Mod mínimo: keybind → pantalla con 2 botones fijos (`/spawn`, `/healpokemon`) | Funciona en Youer con cliente modeado; el permiso oculta/muestra el botón |
-| 2 | Carga desde JSON + `/zgui reload` + iconos propios + acción `command` con `as` (`player`/`player_op`/`console`) | Cambiar el JSON y recargar cambia la pantalla sin reiniciar; el botón «Nether» funciona para un jugador sin op |
+| 2 | Carga desde JSON + `/ZianGui reload` + iconos propios + acción `command` con `as` (`player`/`player_op`/`console`) | Cambiar el JSON y recargar cambia la pantalla sin reiniciar; el botón «Nether» funciona para un jugador sin op |
 | 2b | Editor en juego para admins (crear/editar/borrar botones) | Un admin crea un botón con nombre y comando desde la pantalla y funciona al instante; un jugador normal no puede enviar paquetes de edición |
-| 3 | Permisos LuckPerms (7.2): estados `locked`/`hidden`, mensaje de acceso denegado, `/zgui check`, cooldowns, `open_menu`, feedback en pantalla | Un jugador sin rango con acceso ve el botón bloqueado y recibe el mensaje al pulsarlo; no puede ejecutar el comando ni forzando paquetes; al dar o quitar el rango, el botón cambia de estado |
+| 3 | Permisos LuckPerms (7.2): estados `locked`/`hidden`, mensaje de acceso denegado, `/ZianGui check`, cooldowns, `open_menu`, feedback en pantalla | Un jugador sin rango con acceso ve el botón bloqueado y recibe el mensaje al pulsarlo; no puede ejecutar el comando ni forzando paquetes; al dar o quitar el rango, el botón cambia de estado |
 | 4 | `ZianGuiApi` e integración con Zian GTS / Utilities | Otro mod registra una acción y un botón la usa |
 | 5 | Extras: listas dinámicas (homes/warps), paginación, confirmación opcional para botones peligrosos | — |
 
@@ -329,7 +329,7 @@ Pruebas mínimas de la fase 3: jugador sin permiso, jugador con permiso, permiso
 5. ¿Los nodos de EternalCore usados en el ejemplo son los correctos?
 6. ¿`CommandSourceStack.withPermission(...)` con la ruta vanilla funciona bien en Youer para `/execute` y `/tp` lanzados por un jugador sin op? Probarlo en la fase 2.
 7. ¿Qué nivel de permiso elevado conviene para `player_op` (2 basta para `/execute`, `/tp`, `/give`; 4 para comandos de administración)? Recomendación: 2 por defecto y campo opcional `op_level`.
-8. ¿LuckPerms está instalado como plugin Bukkit en el Youer de Ian, y `hasPermission` responde bien tanto para nodos normales como para `group.<nombre>`? Confirmarlo con `/zgui check` en la fase 3.
+8. ¿LuckPerms está instalado como plugin Bukkit en el Youer de Ian, y `hasPermission` responde bien tanto para nodos normales como para `group.<nombre>`? Confirmarlo con `/ZianGui check` en la fase 3.
 9. ¿Los comandos de mods (Cobblemon) consultan LuckPerms por su cuenta o solo usan nivel de op? Si usan op, el botón con `as: "player"` puede salir habilitado y el comando fallar; en ese caso usar `player_op` con el nodo en `permission`.
 
 ---

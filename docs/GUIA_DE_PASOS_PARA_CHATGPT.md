@@ -156,8 +156,8 @@ PASO 4: Fase 2 de la especificación.
 - Carga de menús desde config/zian_gui/menus/*.json (formato de la sección 7),
   con defaults/principal.json copiado si no hay menús, validación (ids
   duplicados, posiciones fuera de la grilla, acciones desconocidas) y errores
-  claros en log sin tumbar el servidor. Comando /zgui reload, /zgui list,
-  /zgui open <menu> [jugador] y alias /menu.
+  claros en log sin tumbar el servidor. Comando /ZianGui reload, /ZianGui list,
+  /ZianGui open <menu> [jugador] y alias /menu.
 - Acción genérica "command" con el campo "as": player | player_op | console
   (sección 7.1), más open_menu, message, sound, close; alias player_command y
   console_command; delay_ticks; placeholders {player} {uuid} {x} {y} {z}
@@ -174,7 +174,7 @@ PASO 4: Fase 2 de la especificación.
 
 **Pruebas de Ian:**
 
-- Editar el JSON, `/zgui reload` y ver el cambio sin reiniciar.
+- Editar el JSON, `/ZianGui reload` y ver el cambio sin reiniciar.
 - El botón «Nether» funciona con un jugador **sin op** y lo deja en el Nether.
 - Un botón con `as: console` y otro con `as: player` funcionan.
 - Un JSON roto no impide arrancar el servidor y deja un error claro en el log.
@@ -191,7 +191,7 @@ PASO 4: Fase 2 de la especificación.
 
 ```
 PASO 5: Fase 2b de la especificación (editor en juego, solo admins).
-- Botón "Editar" visible solo con permiso zian.gui.edit u op 4, y /zgui edit <menu>.
+- Botón "Editar" visible solo con permiso zian.gui.edit u op 4, y /ZianGui edit <menu>.
 - Formulario: nombre, icono (selector con los iconos del mod y búsqueda de items),
   permiso opcional, posición en la grilla, cooldown, lista de comandos con
   selector "as" (player/player_op/console).
@@ -230,14 +230,14 @@ PASO 6: Fase 3 de la especificación (sección 7.2).
   pantalla está abierta.
 - Cooldowns por botón y jugador, limpiados al desconectarse. Aviso informativo en
   log para botones as=console/player_op sin permission.
-- Comando /zgui check <jugador> <menu> <boton> que muestre nodos evaluados, resultado,
+- Comando /ZianGui check <jugador> <menu> <boton> que muestre nodos evaluados, resultado,
   estado final y proveedor de permisos que respondió.
 - mod_version=0.4.0, PR a main, etiqueta v0.4.0.
 ```
 
-**Pruebas de Ian (LuckPerms):** permiso heredado de otro rango; comodín; permiso negado explícitamente; rango temporal que caduca; permiso quitado con la pantalla abierta; servidor sin LuckPerms (respaldo por op). Usar `/zgui check` para confirmar por qué sale bloqueado y apuntar si `group.<nombre>` responde.
+**Pruebas de Ian (LuckPerms):** permiso heredado de otro rango; comodín; permiso negado explícitamente; rango temporal que caduca; permiso quitado con la pantalla abierta; servidor sin LuckPerms (respaldo por op). Usar `/ZianGui check` para confirmar por qué sale bloqueado y apuntar si `group.<nombre>` responde.
 
-**Traer a Claude:** la salida de `/zgui check` si algo no coincide con lo esperado.
+**Traer a Claude:** la salida de `/ZianGui check` si algo no coincide con lo esperado.
 
 ---
 

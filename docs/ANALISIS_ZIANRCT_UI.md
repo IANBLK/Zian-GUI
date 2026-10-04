@@ -77,7 +77,7 @@ de Cobblemon ni los controles del modpack completo; no se puede certificar una
 tecla libre a partir de estos dos repositorios.
 
 Decisión segura para la primera pantalla: keybind configurable inicialmente
-sin asignar (`InputConstants.UNKNOWN`), y apertura mediante `/zgui open`.
+sin asignar (`InputConstants.UNKNOWN`), y apertura mediante `/ZianGui open`.
 Ian podrá asignar una tecla libre en sus controles sin colisionar por defecto.
 Esto es una desviación deliberada de la preferencia por una tecla asignada:
 queda pendiente elegirla después de verificar los controles reales de Cobblemon
