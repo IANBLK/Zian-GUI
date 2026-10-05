@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.0-beta.2
+
+- Panel y botones más compactos: tarjetas de 104 × 68 en lugar de 124 × 100.
+- Curación comprueba el permiso propio `cobblemon.command.healpokemon.self`
+  y el permiso adicional de Youer `minecraft.command.healpokemon`.
+- Antes de ejecutar, el puente Bukkit comprueba que el comando exista y permita al jugador
+  usarlo; no registra una denegación del wrapper como una ejecución aceptada.
+- Ejemplos de LuckPerms para el grupo `default`, sin conceder OP ni comodines.
+- Dos pruebas nuevas para los permisos combinados de curación y Spawn.
+
 ## 0.1.0-beta.1
 
 - Primera pantalla propia, abierta con `/ZianGui` o `/ZianGui open`.

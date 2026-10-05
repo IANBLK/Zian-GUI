@@ -147,7 +147,7 @@ Archivo: `config/zian_gui/menus/principal.json` (un archivo por menú; si no hay
       "icon": "ziangui:heal",
       "name": "&cCurar Pokémon",
       "lore": ["&7Cura a tu equipo"],
-      "permission": "cobblemon.command.healpokemon",
+      "permission": "cobblemon.command.healpokemon.self",
       "show_when_denied": "hidden",
       "cooldown_seconds": 30,
       "actions": [
@@ -278,7 +278,7 @@ Puntos delicados, **probar en un Youer real** antes de dar por buena cada decisi
 2. **Ejecución de comandos.** Modo `auto`: `Bukkit.dispatchCommand(sender, cmd)` por reflexión (sender = jugador Bukkit o consola); si la ruta Bukkit no está disponible o lanza excepción, usar `server.getCommands().performPrefixedCommand(...)`. **No** reintentar por vanilla cuando Bukkit devuelve `false` (riesgo de ejecutar dos veces). Permitir forzar `"dispatch": "bukkit" | "vanilla"` por acción.
 3. **Verificar** que la ruta Bukkit ejecuta tanto comandos de plugins (EternalCore) como de mods (Cobblemon). Si no, documentar qué ruta usa cada uno.
 4. Los comandos se ejecutan **como el jugador**, de modo que el propio comando vuelve a validar el permiso (el chequeo del botón es solo para mostrar/ocultar, no la única barrera).
-5. **Nodos de permiso:** no adivinar. Cobblemon usa `cobblemon.command.<comando>` (ej. `cobblemon.command.pc`, `cobblemon.command.healpokemon`). Los de EternalCore hay que **confirmarlos** en su documentación o con `/lp user <jugador> permission info`, y ajustar el JSON de ejemplo.
+5. **Nodos de permiso:** no adivinar. Cobblemon usa `cobblemon.command.<comando>` (ej. `cobblemon.command.pc`, `cobblemon.command.healpokemon.self`). Los de EternalCore hay que **confirmarlos** en su documentación o con `/lp user <jugador> permission info`, y ajustar el JSON de ejemplo.
 6. Comandos con argumentos (`/warp <nombre>`, `/home <nombre>`): en v1 el botón lleva el argumento fijo. Listas dinámicas (homes/warps del jugador) quedan para la fase 5.
 
 ## 9. Iconos

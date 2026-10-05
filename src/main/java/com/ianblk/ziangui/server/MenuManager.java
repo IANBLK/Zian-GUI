@@ -14,10 +14,15 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class MenuManager {
-    private record Action(String id, String label, String icon, String permission, String command) {}
-    private static final List<Action> ACTIONS = List.of(
-        new Action("spawn", "Spawn", "minecraft:compass", "eternalcore.spawn", "spawn"),
-        new Action("heal", "Curar Pokémon", "minecraft:golden_apple", "cobblemon.command.healpokemon", "healpokemon"));
+    record Action(String id, String label, String icon, List<String> permissions, String command) {
+        boolean allowed(java.util.function.Predicate<String> check) {
+            return permissions.stream().allMatch(check);
+        }
+    }
+    static final List<Action> ACTIONS = List.of(
+        new Action("spawn", "Spawn", "minecraft:compass", List.of("eternalcore.spawn"), "spawn"),
+        new Action("heal", "Curar Pokémon", "minecraft:golden_apple",
+            List.of("cobblemon.command.healpokemon.self", "minecraft.command.healpokemon"), "healpokemon"));
     private static final SessionGate GATE = new SessionGate();
     private MenuManager() {}
     private static long now() { return System.nanoTime() / 1_000_000; }
@@ -45,7 +50,8 @@ public final class MenuManager {
         long nonce = ThreadLocalRandom.current().nextLong();
         GATE.open(player.getUUID(), menu, nonce, now());
         PacketDistributor.sendToPlayer(player, new GuiPayloads.OpenMenu(menu, nonce, ACTIONS.stream()
-            .map(a -> new GuiPayloads.ButtonView(a.id, a.label, a.icon, PermissionService.allows(player, a.permission))).toList()));
+            .map(a -> new GuiPayloads.ButtonView(a.id, a.label, a.icon,
+                a.allowed(node -> PermissionService.allows(player, node)))).toList()));
         return true;
     }
     public static void click(ServerPlayer player, GuiPayloads.Click click) {
@@ -53,7 +59,7 @@ public final class MenuManager {
         var action = ACTIONS.stream().filter(a -> a.id.equals(click.buttonId())).findFirst().orElse(null);
         if (action == null) return;
         if (!PermissionService.allows(player, "zian.gui.open") || !PermissionService.allows(player, "zian.gui.menu.principal")
-            || !PermissionService.allows(player, action.permission)) {
+            || !action.allowed(node -> PermissionService.allows(player, node))) {
             PacketDistributor.sendToPlayer(player, new GuiPayloads.Feedback(click.session(), "No tienes permiso para usar este botón."));
             return;
         }

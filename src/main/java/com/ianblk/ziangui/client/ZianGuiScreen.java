@@ -24,12 +24,12 @@ public final class ZianGuiScreen extends Screen {
     public long session() { return menu.session(); }
     public void feedback(String text) { feedback = text; }
     @Override protected void init() {
-        panelWidth = Math.min(380, width - 16);
-        panelHeight = Math.min(230, height - 16);
+        panelWidth = Math.min(280, width - 16);
+        panelHeight = Math.min(184, height - 16);
         left = (width - panelWidth) / 2; top = (height - panelHeight) / 2;
         int count = menu.buttons().size();
-        int cardWidth = Math.min(124, (panelWidth - 40) / Math.max(1, count));
-        int cardHeight = Math.max(48, Math.min(100, panelHeight - 112));
+        int cardWidth = Math.min(104, (panelWidth - 40) / Math.max(1, count));
+        int cardHeight = Math.max(48, Math.min(68, panelHeight - 116));
         int start = (width - (count * cardWidth + Math.max(0, count - 1) * 12)) / 2;
         for (int i = 0; i < count; i++) {
             var view = menu.buttons().get(i);
@@ -50,7 +50,7 @@ public final class ZianGuiScreen extends Screen {
         graphics.drawCenteredString(font, title, width / 2, top + 15, 0xFFF2C14E);
         graphics.drawCenteredString(font, Component.literal("Menú principal"), width / 2, top + 30, 0xFFAAAAAA);
         if (!feedback.isEmpty()) graphics.drawWordWrap(font, Component.literal(feedback), left + 12,
-            top + panelHeight - 68, panelWidth - 24, 0xFFFFAA55);
+            top + panelHeight - 58, panelWidth - 24, 0xFFFFAA55);
         super.render(graphics, mouseX, mouseY, partialTick);
     }
     @Override public void removed() {

@@ -127,7 +127,7 @@ PASO 3: Fase 1 de la especificación.
   con Dist.CLIENT para que no cargue en el servidor dedicado.
 - Menú FIJO en código (aún sin JSON) con 2 botones: Spawn (/spawn, permiso
   eternalcore.spawn) y Curar Pokémon (/healpokemon, permiso
-  cobblemon.command.healpokemon). El servidor oculta el botón si no hay permiso.
+  cobblemon.command.healpokemon.self). El servidor oculta el botón si no hay permiso.
 - Seguridad de la sección 4: el cliente solo envía menuId+buttonId, el servidor
   revalida el permiso en cada clic, limpia sesión al desconectarse.
 - mod_version=0.1.0. Al terminar: merge dev→main por Pull Request, etiqueta

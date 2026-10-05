@@ -16,6 +16,14 @@ public final class CommandBridge {
             Class<?> bukkit = Class.forName("org.bukkit.Bukkit");
             Class<?> commandSender = Class.forName("org.bukkit.command.CommandSender");
             dispatch = bukkit.getMethod("dispatchCommand", commandSender, String.class);
+            // Bukkit may return true after a permission denial. Check its command gate
+            // first without dispatching, elevating privileges or trying another route.
+            Object server = bukkit.getMethod("getServer").invoke(null);
+            Object map = server.getClass().getMethod("getCommandMap").invoke(server);
+            Object target = Class.forName("org.bukkit.command.CommandMap")
+                .getMethod("getCommand", String.class).invoke(map, command);
+            if (target == null || !((Boolean) Class.forName("org.bukkit.command.Command")
+                .getMethod("testPermissionSilent", commandSender).invoke(target, sender))) return false;
         } catch (ReflectiveOperationException | RuntimeException | LinkageError error) {
             ZianGui.LOGGER.warn("[ZianGUI] Command bridge unavailable; no command executed.", error);
             return false;

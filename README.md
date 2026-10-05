@@ -3,7 +3,7 @@
 Pantalla propia para Minecraft 1.21.1 con NeoForge, diseñada para servidores Youer.
 Autor: IANBLK. Licencia MIT.
 
-## 0.1.0-beta.1 — primera pantalla
+## 0.1.0-beta.2 — primera pantalla
 
 `/ZianGui` y `/ZianGui open` abren el menú principal con dos botones:
 **Spawn** (`spawn`) y **Curar Pokémon** (`healpokemon`). La pantalla usa tarjetas oscuras,
@@ -28,15 +28,17 @@ La raíz `/zgui` no se registra.
 ## Permisos en Youer
 
 Para abrir: `zian.gui.open` y `zian.gui.menu.principal`.
-Para Spawn: `eternalcore.spawn`. Para curar: `cobblemon.command.healpokemon`.
+Para Spawn: `eternalcore.spawn`. Para curar: `cobblemon.command.healpokemon.self` y
+`minecraft.command.healpokemon` (permiso que añade Youer al envolver el comando del mod).
 
-Ejemplo desde consola para una cuenta de prueba (sustituir `IANBLK`):
+Ejemplo desde consola para todos los jugadores del grupo `default`:
 
 ```text
-lp user IANBLK permission set zian.gui.open true
-lp user IANBLK permission set zian.gui.menu.principal true
-lp user IANBLK permission set eternalcore.spawn true
-lp user IANBLK permission set cobblemon.command.healpokemon true
+lp group default permission set zian.gui.open true
+lp group default permission set zian.gui.menu.principal true
+lp group default permission set eternalcore.spawn true
+lp group default permission set cobblemon.command.healpokemon.self true
+lp group default permission set minecraft.command.healpokemon true
 ```
 
 El comando de destino también puede requerir otros permisos propios del servidor.
@@ -58,7 +60,7 @@ se deniega la acción; una ejecución incierta nunca se reintenta automáticamen
 ## Descargar y probar
 
 [Actions](https://github.com/IANBLK/Zian-GUI/actions): abrir la ejecución verde de `dev`,
-descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.1.jar`**.
+descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.2.jar`**.
 Los artifacts duran 14 días y requieren iniciar sesión en GitHub.
 
 Las pruebas automatizadas cubren permisos, sesiones y límites del protocolo.
