@@ -1,0 +1,17 @@
+<p><strong>✨ ZIAN GUI — 0.1.0-beta.7</strong></p>
+<p><strong>🛠️ NEW IN-GAME BUTTON EDITOR</strong></p>
+<p>Added an administrator editor accessible through the <strong>Edit</strong> button or <strong>/ZianGui edit [menu]</strong>.</p>
+<p>Create, rename, reorder, and delete buttons. Change their commands and permission requirements, and select an item held in the main hand as the icon without consuming it.</p>
+<p><strong>💾 SAVE AND RECOVER YOUR MENUS</strong></p>
+<p>Editor changes save immediately to the original server menu file, with an atomic replacement and a <strong>.json.bak</strong> backup of the previous contents.</p>
+<p>Invalid changes, outdated editor sessions, and conflicting file edits are rejected. Successful saves close old menu sessions and refresh the administrator’s editor.</p>
+<p>Empty menus are supported, allowing administrators to remove every default button and add their own.</p>
+<p><strong>🔐 ADMINISTRATIVE ACCESS</strong></p>
+<p>Added <strong>zian.gui.edit</strong> for editor access. The server checks this permission on every save.</p>
+<p>Existing player permissions and destination-command permission checks remain in place. Button actions continue to run as the player.</p>
+<p><strong>📦 UPDATE REQUIREMENTS</strong></p>
+<p>Install <strong>0.1.0-beta.7 on both client and server</strong>. This release uses network protocol 3; earlier beta clients are incompatible.</p>
+<p>Existing JSON menus are preserved. The <strong>Z shortcut</strong>, compact menu layout, and Youer command-routing fixes remain available.</p>
+<p><strong>✅ VALIDATION</strong></p>
+<p>The build passed <strong>37 automated tests</strong>, covering existing behavior, editor changes, ordering, validation, backups, conflicting edits, and packet limits.</p>
+<p><strong>This is a beta release.</strong></p>

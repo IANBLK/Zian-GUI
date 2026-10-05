@@ -1,0 +1,1 @@
+Customizable in-game menus with an admin button editor, item icons, command shortcuts, and LuckPerms support for Youer servers.

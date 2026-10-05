@@ -1,0 +1,46 @@
+{
+  "id": "principal",
+  "title": "Menú principal",
+  "permission": "zian.gui.menu.principal",
+  "buttons": [
+    {
+      "id": "spawn", "name": "Spawn", "icon": "minecraft:compass",
+      "permissions": ["eternalcore.spawn"], "command": "spawn"
+    },
+    {
+      "id": "heal", "name": "Curar Pokémon", "icon": "minecraft:golden_apple",
+      "permissions": ["cobblemon.command.healpokemon.self", "minecraft.command.healpokemon"],
+      "command": "healpokemon"
+    },
+    {
+      "id": "pc", "name": "PC", "icon": "cobblemon:pc",
+      "permissions": ["cobblemon.command.pc", "minecraft.command.pc"], "command": "pc"
+    },
+    {
+      "id": "enderchest", "name": "Ender Chest", "icon": "minecraft:ender_chest",
+      "permissions": ["eternalcore.enderchest"], "command": "enderchest"
+    },
+    {
+      "id": "fly", "name": "Fly", "icon": "minecraft:feather",
+      "permissions": ["eternalcore.fly"], "command": "fly"
+    },
+    {
+      "id": "gacha", "name": "Gachas", "icon": "minecraft:gold_ingot",
+      "permissions": ["zian.gui.button.gacha", "minecraft.command.ZianUtilities"],
+      "command": "ZianUtilities gacha"
+    },
+    {
+      "id": "quests", "name": "Misiones", "icon": "minecraft:book",
+      "permissions": ["zian.gui.button.quests", "minecraft.command.ZianUtilities"],
+      "command": "ZianUtilities quest"
+    },
+    {
+      "id": "gts", "name": "GTS", "icon": "minecraft:emerald",
+      "permissions": ["ziangts.open", "minecraft.command.ZianGTS"], "command": "ZianGTS"
+    },
+    {
+      "id": "medals", "name": "Medallas", "icon": "minecraft:gold_nugget",
+      "permissions": ["zianrct.medals", "minecraft.command.medals"], "command": "medals"
+    }
+  ]
+}

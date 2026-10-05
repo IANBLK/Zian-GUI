@@ -1,0 +1,17 @@
+lp group default permission set zian.gui.open true
+lp group default permission set zian.gui.menu.principal true
+lp group default permission set eternalcore.spawn true
+lp group default permission set cobblemon.command.healpokemon.self true
+lp group default permission set minecraft.command.healpokemon true
+lp group default permission set cobblemon.command.pc true
+lp group default permission set minecraft.command.pc true
+lp group default permission set eternalcore.enderchest true
+lp group default permission set eternalcore.fly true
+lp group default permission set zian.gui.button.gacha true
+lp group default permission set zian.gui.button.quests true
+lp group default permission set minecraft.command.ZianUtilities true
+lp group default permission set ziangts.use true
+lp group default permission set ziangts.open true
+lp group default permission set minecraft.command.ZianGTS true
+lp group default permission set zianrct.medals true
+lp group default permission set minecraft.command.medals true

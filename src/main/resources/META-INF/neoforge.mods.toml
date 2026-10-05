@@ -1,0 +1,24 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="${mod_license}"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+authors="IANBLK"
+description='''Configurable menus for Minecraft. Base build: no GUI yet.'''
+
+[[dependencies.ziangui]]
+modId="neoforge"
+type="required"
+versionRange="[${neo_version},21.2)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.ziangui]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1]"
+ordering="NONE"
+side="BOTH"
