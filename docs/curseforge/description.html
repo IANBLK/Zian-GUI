@@ -1,0 +1,43 @@
+<p><strong>🎛️ ZIAN GUI — YOUR SERVER, ONE MENU</strong></p>
+<p>Bring your server’s commands together in a compact, customizable in-game menu. Zian GUI lets players open useful features with a click while administrators control each button’s name, item icon, command, permissions, and order.</p>
+<p>Designed for Minecraft 1.21.1 with NeoForge and tested on Youer 1.21.1, the interface uses a charcoal background, gold borders, compact buttons, and automatic pagination.</p>
+<p><strong>⌨️ OPEN YOUR MENU WITH Z</strong></p>
+<p>Press <strong>Z</strong> to open the main menu, or use <strong>/ZianGui</strong>. The shortcut can be changed under <strong>Options → Controls → Zian GUI → Open Zian GUI</strong>. Existing installations may retain an older key assignment, so check your Controls settings after updating.</p>
+<p><strong>🛠️ EDIT BUTTONS INSIDE THE GAME</strong></p>
+<p>Administrators can open the editor with <strong>/ZianGui edit</strong>, or click <strong>Edit</strong> in the menu when they have the required permission.</p>
+<p>Create new buttons, rename existing ones, change their commands and permission requirements, reorder them, or remove features your server does not use.</p>
+<p>Hold an item in your <strong>main hand</strong> and select the hand icon option to use that item type as the button’s icon. The server reads the held item when you save and does not consume it. Custom names, enchantments, and item components are not copied into the icon.</p>
+<p>Positions start at <strong>1</strong>, following the order left, right, then the next row. Menus support up to <strong>24 buttons</strong>, with pages when needed. Changes are saved on the server immediately, without a restart or a manual reload.</p>
+<p><strong>🔗 SHORTCUTS FOR YOUR SERVER FEATURES</strong></p>
+<p>The default menu includes <strong>Spawn, Heal Pokémon, PC, Ender Chest, Fly, Gachas, Quests, GTS, and Medals</strong>.</p>
+<p>These are shortcuts to commands supplied by <strong>Cobblemon, EternalCore, Zian Utilities, Zian GTS, and Zian RCT</strong>. Zian GUI does not provide those features itself. Install the relevant mod or plugin, configure its command, and grant its permissions before using the button.</p>
+<p>The menu editor lets you remove unavailable integrations or replace them with your own server commands. Those optional integrations are not required for Zian GUI itself to load.</p>
+<p><strong>📜 COMMANDS</strong></p>
+<p><strong>/ZianGui</strong> — Open the main menu.</p>
+<p><strong>/ZianGui open</strong> — Open the main menu.</p>
+<p><strong>/ZianGui open &lt;menu&gt;</strong> — Open another menu configured on the server.</p>
+<p><strong>/ZianGui edit</strong> — Open the main menu’s button editor.</p>
+<p><strong>/ZianGui edit &lt;menu&gt;</strong> — Edit buttons in another existing menu.</p>
+<p><strong>/ZianGui reload</strong> — Reload the server’s menu files. Invalid files leave the previous working configuration active; a successful reload closes existing menu and editor sessions.</p>
+<p><strong>🔐 LUCKPERMS AND PLAYER PERMISSIONS</strong></p>
+<p>On Youer, Zian GUI checks the player’s Bukkit permissions, allowing administrators to manage access through <strong>LuckPerms groups</strong>.</p>
+<p><strong>zian.gui.open</strong> — Allows opening Zian GUI.</p>
+<p><strong>zian.gui.menu.principal</strong> — Allows opening the default main menu. Other menus use the permission configured in their own file.</p>
+<p><strong>zian.gui.edit</strong> — Administrative access to the in-game button editor.</p>
+<p><strong>zian.gui.reload</strong> — Administrative access to reload menu files.</p>
+<p>Each button can require additional permission nodes, and its destination command still checks the player’s permissions. Adding a button does not automatically grant access to that command. Keep editor and reload permissions in an administrative group.</p>
+<p>Commands run <strong>as the player</strong>, without temporary OP or console execution. Explicit permission denials are respected, including for operators. On standard NeoForge without Bukkit, protected access currently uses the level-2 operator fallback; a native NeoForge permission provider is not included.</p>
+<p>The full default-group permission list is available in the <a href="https://github.com/IANBLK/Zian-GUI/blob/dev/docs/permissions-default.txt">permission guide</a>.</p>
+<p><strong>💾 SERVER CONFIGURATION AND BACKUPS</strong></p>
+<p>Menu files are stored in <strong>config/zian_gui/menus/</strong>. Existing menu files are preserved when updating the mod.</p>
+<p>The editor validates changes before saving and keeps a <strong>.json.bak</strong> copy of the previous menu file. Outdated or conflicting edits are rejected to prevent overwriting another administrator’s changes. Successful edits close old sessions and refresh the editor.</p>
+<p>Multiple menus can be defined in JSON. The in-game editor currently manages buttons in existing menus; creating menus or changing an entire menu’s title and access permission is done through its JSON file.</p>
+<p>Read the <a href="https://github.com/IANBLK/Zian-GUI/blob/dev/docs/EDITOR.md">in-game editor guide</a> for examples and recovery instructions.</p>
+<p><strong>📦 INSTALLATION</strong></p>
+<p>Use <strong>Minecraft 1.21.1</strong>, <strong>Java 21</strong>, and <strong>NeoForge 21.1.228 or a compatible later 21.1 build</strong>.</p>
+<p>Install the <strong>same Zian GUI version on both the client and server</strong>, then restart both. Beta 7 uses network protocol 3 and must not be mixed with clients from earlier betas.</p>
+<p>For Youer servers, install LuckPerms as a plugin if you want group-based access management. Install the optional mods or plugins that supply your chosen button commands. Mod interfaces may also require their corresponding mod on the client.</p>
+<p><strong>🚧 BETA — ACTIVE DEVELOPMENT</strong></p>
+<p>Zian GUI is in active development. Features, configuration options, and visual details may evolve during the beta period.</p>
+<p>When reporting an issue, include your Zian GUI version, Minecraft and server versions, the affected button or command, and relevant logs. Report problems through <a href="https://github.com/IANBLK/Zian-GUI/issues">GitHub Issues</a>.</p>
+<p><strong>Created by IANBLK • Minecraft 1.21.1 • NeoForge • Youer • MIT License</strong></p>
