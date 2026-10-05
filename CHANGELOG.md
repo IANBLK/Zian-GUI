@@ -2,6 +2,8 @@
 
 ## 0.1.0-beta.6
 
+- Actualiza la acción Gradle de GitHub a v5 (Node.js 24) para eliminar el aviso de Node.js 20.
+
 - La tecla predeterminada para abrir el menú principal ahora es Z, configurable en Controles.
 - Conserva los permisos del servidor y las asignaciones de teclas guardadas del jugador.
 
