@@ -21,7 +21,7 @@ public final class CommandBridge {
             Object server = bukkit.getMethod("getServer").invoke(null);
             Object map = server.getClass().getMethod("getCommandMap").invoke(server);
             Object target = Class.forName("org.bukkit.command.CommandMap")
-                .getMethod("getCommand", String.class).invoke(map, command);
+                .getMethod("getCommand", String.class).invoke(map, command.split(" ", 2)[0]);
             if (target == null || !((Boolean) Class.forName("org.bukkit.command.Command")
                 .getMethod("testPermissionSilent", commandSender).invoke(target, sender))) return false;
         } catch (ReflectiveOperationException | RuntimeException | LinkageError error) {

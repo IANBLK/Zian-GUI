@@ -23,6 +23,7 @@ public final class ZianGui {
         NeoForge.EVENT_BUS.addListener(MenuManager::registerCommands);
         NeoForge.EVENT_BUS.addListener(MenuManager::onLogout);
         NeoForge.EVENT_BUS.addListener(MenuManager::onStop);
+        NeoForge.EVENT_BUS.addListener(MenuManager::onStart);
         LOGGER.info("[ZianGUI] cargado");
     }
 }

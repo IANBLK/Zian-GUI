@@ -13,7 +13,7 @@ public final class GuiNetwork {
     private GuiNetwork() {}
     public static void register(RegisterPayloadHandlersEvent event) {
         // Required on both endpoints: do not use optional() on this registrar.
-        var r = event.registrar("1");
+        var r = event.registrar("2");
         r.playToServer(GuiPayloads.OpenRequest.TYPE, GuiPayloads.OpenRequest.CODEC,
             (p, ctx) -> ctx.enqueueWork(() -> {
                 if (ctx.player() instanceof ServerPlayer player) MenuManager.open(player, p.menuId());

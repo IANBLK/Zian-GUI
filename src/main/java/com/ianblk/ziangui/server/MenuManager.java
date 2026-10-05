@@ -12,17 +12,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.registration.NetworkRegistry;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 public final class MenuManager {
-    record Action(String id, String label, String icon, List<String> permissions, String command) {
-        boolean allowed(java.util.function.Predicate<String> check) {
-            return permissions.stream().allMatch(check);
-        }
-    }
-    static final List<Action> ACTIONS = List.of(
-        new Action("spawn", "Spawn", "minecraft:compass", List.of("eternalcore.spawn"), "spawn"),
-        new Action("heal", "Curar Pokémon", "minecraft:golden_apple",
-            List.of("cobblemon.command.healpokemon.self", "minecraft.command.healpokemon"), "healpokemon"));
+    private static MenuConfig CONFIG = new MenuConfig();
     private static final SessionGate GATE = new SessionGate();
     private MenuManager() {}
     private static long now() { return System.nanoTime() / 1_000_000; }
@@ -30,7 +25,38 @@ public final class MenuManager {
         event.getDispatcher().register(Commands.literal(ZianGui.COMMAND_ROOT)
             .requires(source -> true) // Explicit public root prevents Youer implicit OP gating.
             .executes(ctx -> openCommand(ctx.getSource()))
-            .then(Commands.literal("open").executes(ctx -> openCommand(ctx.getSource()))));
+            .then(Commands.literal("open").executes(ctx -> openCommand(ctx.getSource()))
+                .then(Commands.argument("menu", StringArgumentType.word())
+                    .suggests((ctx, builder) -> {
+                        CONFIG.menus().keySet().forEach(builder::suggest); return builder.buildFuture();
+                    })
+                    .executes(ctx -> ctx.getSource().getEntity() instanceof ServerPlayer player
+                        && open(player, StringArgumentType.getString(ctx, "menu")) ? 1 : 0)))
+            .then(Commands.literal("reload").requires(source ->
+                source.getEntity() instanceof ServerPlayer player
+                    ? PermissionService.allows(player, "zian.gui.reload") : source.hasPermission(2))
+                .executes(ctx -> reload(ctx.getSource()))));
+    }
+    public static void onStart(ServerStartingEvent event) {
+        CONFIG = new MenuConfig(); GATE.clear();
+        try { CONFIG.reload(FMLPaths.CONFIGDIR.get().resolve("zian_gui/menus")); }
+        catch (java.io.IOException error) { ZianGui.LOGGER.error("[ZianGUI] Menús desactivados: {}", error.getMessage()); }
+    }
+    private static int reload(net.minecraft.commands.CommandSourceStack source) {
+        try {
+            CONFIG.reload(FMLPaths.CONFIGDIR.get().resolve("zian_gui/menus"));
+            GATE.invalidate().forEach((id, nonce) -> {
+                var player = source.getServer().getPlayerList().getPlayer(id);
+                if (player != null) PacketDistributor.sendToPlayer(player, new GuiPayloads.Close(nonce));
+            });
+            source.sendSuccess(() -> Component.literal("Zian GUI: " + CONFIG.menus().size()
+                + " menú(s) recargados. Las pantallas anteriores se cerraron."), true);
+            return 1;
+        } catch (java.io.IOException error) {
+            source.sendFailure(Component.literal("No se aplicó la recarga: " + error.getMessage()));
+            ZianGui.LOGGER.warn("[ZianGUI] Recarga rechazada: {}", error.getMessage());
+            return 0;
+        }
     }
     private static int openCommand(net.minecraft.commands.CommandSourceStack source) {
         if (!(source.getEntity() instanceof ServerPlayer player)) {
@@ -40,8 +66,11 @@ public final class MenuManager {
     }
     public static boolean open(ServerPlayer player, String menu) {
         if (!GATE.request(player.getUUID(), now())) return false;
-        if (!menu.equals("principal")) return false;
-        if (!PermissionService.allows(player, "zian.gui.open") || !PermissionService.allows(player, "zian.gui.menu.principal")) {
+        var definition = CONFIG.get(menu);
+        if (definition == null) {
+            player.sendSystemMessage(Component.literal("Menú inexistente o configuración inválida.")); return false;
+        }
+        if (!PermissionService.allows(player, "zian.gui.open") || !PermissionService.allows(player, definition.permission())) {
             player.sendSystemMessage(Component.literal("No tienes permiso para abrir este menú.")); return false;
         }
         if (!NetworkRegistry.hasChannel(player.connection, GuiPayloads.OpenMenu.TYPE.id())) {
@@ -49,16 +78,18 @@ public final class MenuManager {
         }
         long nonce = ThreadLocalRandom.current().nextLong();
         GATE.open(player.getUUID(), menu, nonce, now());
-        PacketDistributor.sendToPlayer(player, new GuiPayloads.OpenMenu(menu, nonce, ACTIONS.stream()
-            .map(a -> new GuiPayloads.ButtonView(a.id, a.label, a.icon,
+        PacketDistributor.sendToPlayer(player, new GuiPayloads.OpenMenu(menu, nonce, definition.title(), definition.buttons().stream()
+            .map(a -> new GuiPayloads.ButtonView(a.id(), a.label(), a.icon(),
                 a.allowed(node -> PermissionService.allows(player, node)))).toList()));
         return true;
     }
     public static void click(ServerPlayer player, GuiPayloads.Click click) {
         if (!GATE.valid(player.getUUID(), click.menuId(), click.session(), now()) || !GATE.action(player.getUUID(), now())) return;
-        var action = ACTIONS.stream().filter(a -> a.id.equals(click.buttonId())).findFirst().orElse(null);
+        var definition = CONFIG.get(click.menuId());
+        if (definition == null) return;
+        var action = definition.buttons().stream().filter(a -> a.id().equals(click.buttonId())).findFirst().orElse(null);
         if (action == null) return;
-        if (!PermissionService.allows(player, "zian.gui.open") || !PermissionService.allows(player, "zian.gui.menu.principal")
+        if (!PermissionService.allows(player, "zian.gui.open") || !PermissionService.allows(player, definition.permission())
             || !action.allowed(node -> PermissionService.allows(player, node))) {
             PacketDistributor.sendToPlayer(player, new GuiPayloads.Feedback(click.session(), "No tienes permiso para usar este botón."));
             return;
@@ -66,8 +97,8 @@ public final class MenuManager {
         // Consume the session before dispatch: replay/spam cannot execute a second command.
         GATE.close(player.getUUID(), click.session());
         PacketDistributor.sendToPlayer(player, new GuiPayloads.Close(click.session()));
-        boolean result = CommandBridge.execute(player, action.command);
-        ZianGui.LOGGER.info("[ZianGUI] action=button playerUuid={} button={} result={}", player.getUUID(), action.id, result ? "DISPATCHED" : "NOT_CONFIRMED");
+        boolean result = CommandBridge.execute(player, action.command());
+        ZianGui.LOGGER.info("[ZianGUI] action=button playerUuid={} menu={} button={} result={}", player.getUUID(), definition.id(), action.id(), result ? "DISPATCHED" : "NOT_CONFIRMED");
         if (!result) player.sendSystemMessage(Component.literal("No se pudo confirmar la ejecución. Revisa los permisos y que el comando exista."));
     }
     public static void closed(ServerPlayer player, long session) { GATE.close(player.getUUID(), session); }

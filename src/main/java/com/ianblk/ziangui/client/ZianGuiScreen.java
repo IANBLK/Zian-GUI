@@ -18,25 +18,41 @@ public final class ZianGuiScreen extends Screen {
     private final GuiPayloads.OpenMenu menu;
     private String feedback = "";
     private int left, top, panelWidth, panelHeight;
+    private int page, pages;
     public ZianGuiScreen(GuiPayloads.OpenMenu menu) {
         super(Component.literal("Zian GUI")); this.menu = menu;
     }
     public long session() { return menu.session(); }
     public void feedback(String text) { feedback = text; }
     @Override protected void init() {
-        panelWidth = Math.min(260, width - 16);
-        panelHeight = Math.min(176, height - 16);
+        panelWidth = Math.min(304, width - 16);
+        int rowsPerPage = Math.max(1, Math.min(6, (height - 16 - 108) / 38));
+        int perPage = rowsPerPage * 2;
+        pages = Math.max(1, (menu.buttons().size() + perPage - 1) / perPage);
+        page = Math.min(page, pages - 1);
+        int first = page * perPage;
+        int count = Math.min(perPage, menu.buttons().size() - first);
+        int rows = Math.max(1, (count + 1) / 2);
+        panelHeight = Math.min(108 + rows * 38, height - 16);
         left = (width - panelWidth) / 2; top = (height - panelHeight) / 2;
-        int count = menu.buttons().size();
-        int cardWidth = panelWidth - 24;
+        int cardWidth = (panelWidth - 32) / 2;
         int cardHeight = 30;
         for (int i = 0; i < count; i++) {
-            var view = menu.buttons().get(i);
-            addRenderableWidget(new Card(left + 12, top + 48 + i * (cardHeight + 8), cardWidth, cardHeight, view,
+            var view = menu.buttons().get(first + i);
+            addRenderableWidget(new Card(left + 12 + (i % 2) * (cardWidth + 8),
+                top + 48 + (i / 2) * (cardHeight + 8), cardWidth, cardHeight, view,
                 button -> PacketDistributor.sendToServer(new GuiPayloads.Click(menu.menuId(), view.id(), menu.session()))));
         }
         addRenderableWidget(new ThemedButton(width / 2 - 48, top + panelHeight - 30, 96, 20,
             Component.literal("Cerrar"), button -> onClose()));
+        if (pages > 1) {
+            var prev = addRenderableWidget(new ThemedButton(left + 12, top + panelHeight - 30, 28, 20,
+                Component.literal("<"), button -> { page--; rebuildWidgets(); }));
+            prev.active = page > 0;
+            var next = addRenderableWidget(new ThemedButton(left + panelWidth - 40, top + panelHeight - 30, 28, 20,
+                Component.literal(">"), button -> { page++; rebuildWidgets(); }));
+            next.active = page + 1 < pages;
+        }
     }
     @Override public boolean isPauseScreen() { return false; }
     @Override public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
@@ -47,7 +63,9 @@ public final class ZianGuiScreen extends Screen {
         graphics.fill(left, top, left + panelWidth, top + panelHeight, 0xF0181818);
         graphics.fill(left, top, left + panelWidth, top + 3, 0xFFF2C14E);
         graphics.drawCenteredString(font, title, width / 2, top + 15, 0xFFF2C14E);
-        graphics.drawCenteredString(font, Component.literal("Menú principal"), width / 2, top + 30, 0xFFAAAAAA);
+        String heading = menu.title() + (pages > 1 ? " · " + (page + 1) + "/" + pages : "");
+        if (font.width(heading) > panelWidth - 24) heading = font.plainSubstrByWidth(heading, panelWidth - 36) + "…";
+        graphics.drawCenteredString(font, Component.literal(heading), width / 2, top + 30, 0xFFAAAAAA);
         if (!feedback.isEmpty()) graphics.drawWordWrap(font, Component.literal(feedback), left + 12,
             top + panelHeight - 54, panelWidth - 24, 0xFFFFAA55);
         super.render(graphics, mouseX, mouseY, partialTick);
@@ -67,7 +85,7 @@ public final class ZianGuiScreen extends Screen {
                 isHoveredOrFocused() ? 0xFF444444 : 0xFF2B2B2B);
         }
         @Override protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-            frame(graphics, true);
+            frame(graphics, active);
             var font = Minecraft.getInstance().font;
             graphics.drawCenteredString(font, getMessage(), getX() + width / 2,
                 getY() + (height - font.lineHeight) / 2, 0xFFFFFFFF);
@@ -89,8 +107,11 @@ public final class ZianGuiScreen extends Screen {
             int x = getX(), y = getY();
             graphics.renderItem(icon, x + 8, y + (height - 16) / 2);
             var font = Minecraft.getInstance().font;
-            graphics.drawString(font, getMessage(), x + 32, y + (height - font.lineHeight) / 2,
-                view.enabled() ? 0xFFFFFFFF : 0xFF999999);
+            var lines = font.split(getMessage(), width - 40);
+            int lineY = y + (height - Math.min(2, lines.size()) * font.lineHeight) / 2;
+            for (int i = 0; i < Math.min(2, lines.size()); i++)
+                graphics.drawString(font, lines.get(i), x + 32, lineY + i * font.lineHeight,
+                    view.enabled() ? 0xFFFFFFFF : 0xFF999999);
         }
     }
 }

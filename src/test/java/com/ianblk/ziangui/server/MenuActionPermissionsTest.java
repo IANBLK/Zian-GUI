@@ -5,8 +5,13 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MenuActionPermissionsTest {
+    private MenuConfig.Menu defaults() {
+        try (var in = MenuConfig.class.getResourceAsStream("/defaults/principal.json")) {
+            return MenuConfig.parse(new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8));
+        } catch (java.io.IOException error) { throw new java.io.UncheckedIOException(error); }
+    }
     @Test void healRequiresBothSelfAndYouerWrapperPermissions() {
-        var heal = MenuManager.ACTIONS.stream().filter(a -> a.id().equals("heal")).findFirst().orElseThrow();
+        var heal = defaults().buttons().stream().filter(a -> a.id().equals("heal")).findFirst().orElseThrow();
         assertFalse(heal.allowed(Set.of("cobblemon.command.healpokemon.self")::contains));
         assertFalse(heal.allowed(Set.of("minecraft.command.healpokemon")::contains));
         assertFalse(heal.allowed(Set.of("cobblemon.command.healpokemon")::contains));
@@ -14,7 +19,7 @@ class MenuActionPermissionsTest {
         assertEquals("healpokemon", heal.command()); // No target: only the player's own party.
     }
     @Test void spawnKeepsPluginPermissionWithoutMinecraftWrapperRequirement() {
-        var spawn = MenuManager.ACTIONS.stream().filter(a -> a.id().equals("spawn")).findFirst().orElseThrow();
+        var spawn = defaults().buttons().stream().filter(a -> a.id().equals("spawn")).findFirst().orElseThrow();
         assertTrue(spawn.allowed(Set.of("eternalcore.spawn")::contains));
         assertFalse(spawn.allowed(node -> false));
     }

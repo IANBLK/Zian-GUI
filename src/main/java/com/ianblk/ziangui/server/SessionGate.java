@@ -33,4 +33,11 @@ public final class SessionGate {
         sessions.remove(player); nextRequest.remove(player); nextAction.remove(player);
     }
     public void clear() { sessions.clear(); nextRequest.clear(); nextAction.clear(); }
+    /** Successful reload closes every old screen but preserves rate limits. */
+    public Map<UUID, Long> invalidate() {
+        Map<UUID, Long> old = new HashMap<>();
+        sessions.forEach((id, session) -> old.put(id, session.nonce));
+        sessions.clear();
+        return old;
+    }
 }

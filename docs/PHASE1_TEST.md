@@ -1,3 +1,7 @@
+# Guía histórica — primeras pantallas (Betas 1–3)
+
+Para la Beta 4, seguir [CONFIG_MENUS.md](CONFIG_MENUS.md).
+
 # Prueba de primera pantalla en Youer
 
 Versión: **0.1.0-beta.3**, Minecraft 1.21.1, Java 21.

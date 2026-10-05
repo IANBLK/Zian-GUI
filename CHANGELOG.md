@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-beta.4
+
+- Dos columnas de botones y paginación adaptada a la altura disponible.
+- PC, Fly y Ender Chest, más Gachas, Misiones, GTS y Medallas de los mods Zian.
+- Menús JSON del servidor en `config/zian_gui/menus/`, con ejemplo principal automático.
+- `/ZianGui open <menú>` y `/ZianGui reload`, restringido por `zian.gui.reload`.
+- Validación de campos, comandos, permisos, IDs duplicados y límites de tamaño/cantidad.
+- Recarga completa o sin cambios: un archivo inválido conserva la configuración anterior.
+- Al recargar se invalidan y cierran las pantallas antiguas sin borrar los límites de clics.
+- Los comandos con argumentos se comprueban por su raíz en el puente Bukkit.
+- Protocolo 2: instalar esta versión en cliente y servidor; no mezclar con Betas 1–3.
+- No incluye ejecución como consola/OP, editor ni acciones encadenadas.
+
 ## 0.1.0-beta.3
 
 - Acciones en filas de 30 píxeles con icono y texto alineados, eliminando el espacio vacío de las tarjetas.
