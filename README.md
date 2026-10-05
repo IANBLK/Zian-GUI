@@ -3,11 +3,12 @@
 Pantalla propia para Minecraft 1.21.1 con NeoForge, diseñada para servidores Youer.
 Autor: IANBLK. Licencia MIT.
 
-## 0.1.0-beta.2 — primera pantalla
+## 0.1.0-beta.3 — primera pantalla
 
 `/ZianGui` y `/ZianGui open` abren el menú principal con dos botones:
-**Spawn** (`spawn`) y **Curar Pokémon** (`healpokemon`). La pantalla usa tarjetas oscuras,
-bordes dorados e iconos de Minecraft. Los botones sin permiso se muestran bloqueados.
+**Spawn** (`spawn`) y **Curar Pokémon** (`healpokemon`). La pantalla usa filas compactas,
+bordes dorados e iconos de Minecraft. Cerrar comparte el mismo estilo visual.
+Los botones sin permiso se muestran bloqueados.
 En Controles se puede asignar una tecla para abrirla; inicialmente no tiene tecla asignada.
 
 Esta fase usa dos acciones fijas. Todavía no incluye menús JSON, editor, `reload`,
@@ -60,7 +61,7 @@ se deniega la acción; una ejecución incierta nunca se reintenta automáticamen
 ## Descargar y probar
 
 [Actions](https://github.com/IANBLK/Zian-GUI/actions): abrir la ejecución verde de `dev`,
-descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.2.jar`**.
+descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.3.jar`**.
 Los artifacts duran 14 días y requieren iniciar sesión en GitHub.
 
 Las pruebas automatizadas cubren permisos, sesiones y límites del protocolo.

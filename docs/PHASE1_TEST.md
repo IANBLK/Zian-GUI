@@ -1,13 +1,16 @@
 # Prueba de primera pantalla en Youer
 
-Versión: **0.1.0-beta.2**, Minecraft 1.21.1, Java 21.
+Versión: **0.1.0-beta.3**, Minecraft 1.21.1, Java 21.
 Estado: compilación y pruebas automatizadas separadas de la prueba real en Youer.
-No se han certificado todavía el dibujo en el juego ni el puente de comandos de tu servidor.
+El usuario confirmó que la pantalla abre y Curar funciona en Youer con la Beta 2:
+`lp group default permission set minecraft.command.healpokemon true` resolvió la denegación.
+La distribución visual nueva de la Beta 3 necesita comprobarse en el juego; Spawn
+queda pendiente de configurar y probar en EternalCore.
 
 ## Preparación
 
 1. Con el cliente y servidor apagados, retirar el JAR anterior de Zian GUI.
-2. Instalar `zian-gui-0.1.0-beta.2.jar` en ambos y reiniciar. No cambia el startup.
+2. Instalar `zian-gui-0.1.0-beta.3.jar` en ambos y reiniciar. No cambia el startup.
 3. Usar una cuenta sin OP. Desde consola conceder los cinco permisos del README al grupo de esa
    cuenta (`default` en los ejemplos). Verificar que `spawn` y `healpokemon` existen y funcionan manualmente como ella.
 4. Esta fase no lee JSON. Solo tiene un menú fijo llamado `principal`.
