@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-beta.5
+
+- Corrige Gachas, Misiones y GTS en Youer cuando sus comandos no están en el mapa Bukkit.
+- Selecciona la vía nativa de Minecraft antes de ejecutar y conserva las mayúsculas del comando.
+- Comprueba los requisitos del comando nativo con el jugador y respeta sus permisos.
+- Un comando Bukkit registrado mantiene su vía: una denegación, fallo o resultado incierto
+  no dispara una segunda ejecución por Minecraft.
+- Seis pruebas nuevas para selección de vía, denegaciones y ausencia de reintentos.
+
 ## 0.1.0-beta.4
 
 - Dos columnas de botones y paginación adaptada a la altura disponible.

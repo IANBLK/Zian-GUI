@@ -3,7 +3,7 @@
 Pantalla propia para Minecraft 1.21.1 con NeoForge, diseñada para servidores Youer.
 Autor: IANBLK. Licencia MIT.
 
-## 0.1.0-beta.4 — menús configurables
+## 0.1.0-beta.5 — menús configurables
 
 `/ZianGui` y `/ZianGui open` abren el menú principal con nueve botones:
 **Spawn, Curar Pokémon, PC, Ender Chest, Fly, Gachas, Misiones, GTS y Medallas**.
@@ -36,6 +36,9 @@ Para Spawn: `eternalcore.spawn`. Para curar: `cobblemon.command.healpokemon.self
 `minecraft.command.healpokemon` (permiso que añade Youer al envolver el comando del mod).
 
 Ejemplo desde consola para todos los jugadores del grupo `default`:
+
+Lista completa para restaurar estos accesos desde cero:
+[permissions-default.txt](docs/permissions-default.txt).
 
 ```text
 lp group default permission set zian.gui.open true
@@ -83,7 +86,7 @@ Consulta el [formato y las pruebas de configuración](docs/CONFIG_MENUS.md).
 ## Descargar y probar
 
 [Actions](https://github.com/IANBLK/Zian-GUI/actions): abrir la ejecución verde de `dev`,
-descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.4.jar`**.
+descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.5.jar`**.
 Los artifacts duran 14 días y requieren iniciar sesión en GitHub.
 
 Las pruebas automatizadas cubren permisos, sesiones y límites del protocolo.

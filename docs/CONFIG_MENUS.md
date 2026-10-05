@@ -1,6 +1,6 @@
-# Menús configurables — Beta 4
+# Menús configurables — Beta 5
 
-Instalar `zian-gui-0.1.0-beta.4.jar` en servidor y cliente, retirando el JAR anterior.
+Instalar `zian-gui-0.1.0-beta.5.jar` en servidor y cliente, retirando el JAR anterior.
 No requiere cambios del startup. El protocolo cambió: ambos lados necesitan esta versión.
 
 ## Archivo del servidor
@@ -80,6 +80,9 @@ Los permisos adicionales `minecraft.command.*` corresponden al wrapper de Youer.
 Los botones solo abren interfaces: no giran el gacha, aceptan misiones, compran Pokémon
 ni modifican medallas. El mod de destino continúa aplicando sus reglas.
 Si falta un mod/plugin o su comando está desactivado, la GUI no lo ejecutará ni reintentará.
+Desde la Beta 5, si el comando no está registrado en Bukkit, se selecciona el registro
+nativo de Minecraft antes de ejecutar. Esto permite abrir comandos de mods en Youer.
+Un comando Bukkit existente que deniegue permisos o falle no se reintenta por otra vía.
 
 ## Prueba en Youer
 

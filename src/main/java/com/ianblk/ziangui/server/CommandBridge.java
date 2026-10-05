@@ -22,12 +22,30 @@ public final class CommandBridge {
             Object map = server.getClass().getMethod("getCommandMap").invoke(server);
             Object target = Class.forName("org.bukkit.command.CommandMap")
                 .getMethod("getCommand", String.class).invoke(map, command.split(" ", 2)[0]);
-            if (target == null || !((Boolean) Class.forName("org.bukkit.command.Command")
-                .getMethod("testPermissionSilent", commandSender).invoke(target, sender))) return false;
+            if (target == null) {
+                // Youer does not expose every mod command in Bukkit's command map.
+                // Select the native route BEFORE any dispatch; preserve exact root case.
+                return CommandRoute.execute(false, () -> false, () -> false, () -> vanilla(player, command));
+            }
+            Method permission = Class.forName("org.bukkit.command.Command")
+                .getMethod("testPermissionSilent", commandSender);
+            return CommandRoute.execute(true,
+                () -> permitted(permission, target, sender),
+                () -> dispatch(dispatch, sender, command),
+                () -> vanilla(player, command));
         } catch (ReflectiveOperationException | RuntimeException | LinkageError error) {
             ZianGui.LOGGER.warn("[ZianGUI] Command bridge unavailable; no command executed.", error);
             return false;
         }
+    }
+    private static boolean permitted(Method permission, Object target, Object sender) {
+        try { return (Boolean) permission.invoke(target, sender); }
+        catch (ReflectiveOperationException | RuntimeException | LinkageError error) {
+            ZianGui.LOGGER.warn("[ZianGUI] Command permission lookup failed; no command executed.", error);
+            return false;
+        }
+    }
+    private static boolean dispatch(Method dispatch, Object sender, String command) {
         try {
             return (Boolean) dispatch.invoke(null, sender, command);
         } catch (ReflectiveOperationException | RuntimeException | LinkageError error) {
@@ -41,6 +59,8 @@ public final class CommandBridge {
         if (server == null) return false;
         try {
             var dispatcher = server.getCommands().getDispatcher();
+            var root = dispatcher.getRoot().getChild(command.split(" ", 2)[0]);
+            if (root == null || !root.canUse(player.createCommandSourceStack())) return false;
             return dispatcher.execute(command, player.createCommandSourceStack()) > 0;
         } catch (Exception error) {
             ZianGui.LOGGER.warn("[ZianGUI] Vanilla command failed; no automatic retry.", error);
