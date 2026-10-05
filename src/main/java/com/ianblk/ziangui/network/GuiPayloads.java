@@ -31,7 +31,7 @@ public final class GuiPayloads {
                 throw new IllegalArgumentException("Invalid button view");
         }
     }
-    public record OpenMenu(String menuId, long session, String title, List<ButtonView> buttons) implements CustomPacketPayload {
+    public record OpenMenu(String menuId, long session, String title, List<ButtonView> buttons, boolean editable) implements CustomPacketPayload {
         public static final Type<OpenMenu> TYPE = GuiPayloads.type("open_menu");
         public static final StreamCodec<RegistryFriendlyByteBuf, OpenMenu> CODEC = StreamCodec.of(
             (buf, p) -> {
@@ -39,12 +39,13 @@ public final class GuiPayloads {
                 for (var b : p.buttons) {
                     buf.writeUtf(b.id, 32); buf.writeUtf(b.label, 64); buf.writeUtf(b.icon, 128); buf.writeBoolean(b.enabled);
                 }
+                buf.writeBoolean(p.editable);
             }, buf -> {
                 String menu = buf.readUtf(32); long session = buf.readLong(); String title = buf.readUtf(64); int count = buf.readVarInt();
                 if (count < 0 || count > 24) throw new IllegalArgumentException("Invalid button count");
                 var buttons = new java.util.ArrayList<ButtonView>(count);
                 for (int i = 0; i < count; i++) buttons.add(new ButtonView(buf.readUtf(32), buf.readUtf(64), buf.readUtf(128), buf.readBoolean()));
-                return new OpenMenu(menu, session, title, buttons);
+                return new OpenMenu(menu, session, title, buttons, buf.readBoolean());
             });
         public OpenMenu {
             menuId = id(menuId); buttons = List.copyOf(buttons);

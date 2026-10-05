@@ -20,6 +20,14 @@ public final class MenuManager {
     private static MenuConfig CONFIG = new MenuConfig();
     private static final SessionGate GATE = new SessionGate();
     private MenuManager() {}
+    static MenuConfig configuration() { return CONFIG; }
+    static java.nio.file.Path directory() { return FMLPaths.CONFIGDIR.get().resolve("zian_gui/menus"); }
+    static void invalidate(net.minecraft.server.MinecraftServer server) {
+        GATE.invalidate().forEach((id, nonce) -> {
+            var player = server.getPlayerList().getPlayer(id);
+            if (player != null) PacketDistributor.sendToPlayer(player, new GuiPayloads.Close(nonce));
+        });
+    }
     private static long now() { return System.nanoTime() / 1_000_000; }
     public static void registerCommands(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal(ZianGui.COMMAND_ROOT)
@@ -32,23 +40,26 @@ public final class MenuManager {
                     })
                     .executes(ctx -> ctx.getSource().getEntity() instanceof ServerPlayer player
                         && open(player, StringArgumentType.getString(ctx, "menu")) ? 1 : 0)))
+            .then(Commands.literal("edit").requires(source -> source.getEntity() instanceof ServerPlayer player
+                && PermissionService.allows(player, "zian.gui.edit"))
+                .executes(ctx -> MenuEditor.open(ctx.getSource().getPlayerOrException(), "principal") ? 1 : 0)
+                .then(Commands.argument("menu", StringArgumentType.word())
+                    .suggests((ctx, builder) -> { CONFIG.menus().keySet().forEach(builder::suggest); return builder.buildFuture(); })
+                    .executes(ctx -> MenuEditor.open(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "menu")) ? 1 : 0)))
             .then(Commands.literal("reload").requires(source ->
                 source.getEntity() instanceof ServerPlayer player
                     ? PermissionService.allows(player, "zian.gui.reload") : source.hasPermission(2))
                 .executes(ctx -> reload(ctx.getSource()))));
     }
     public static void onStart(ServerStartingEvent event) {
-        CONFIG = new MenuConfig(); GATE.clear();
+        CONFIG = new MenuConfig(); GATE.clear(); MenuEditor.clear();
         try { CONFIG.reload(FMLPaths.CONFIGDIR.get().resolve("zian_gui/menus")); }
         catch (java.io.IOException error) { ZianGui.LOGGER.error("[ZianGUI] Menús desactivados: {}", error.getMessage()); }
     }
     private static int reload(net.minecraft.commands.CommandSourceStack source) {
         try {
             CONFIG.reload(FMLPaths.CONFIGDIR.get().resolve("zian_gui/menus"));
-            GATE.invalidate().forEach((id, nonce) -> {
-                var player = source.getServer().getPlayerList().getPlayer(id);
-                if (player != null) PacketDistributor.sendToPlayer(player, new GuiPayloads.Close(nonce));
-            });
+            invalidate(source.getServer()); MenuEditor.invalidate(source.getServer());
             source.sendSuccess(() -> Component.literal("Zian GUI: " + CONFIG.menus().size()
                 + " menú(s) recargados. Las pantallas anteriores se cerraron."), true);
             return 1;
@@ -80,7 +91,7 @@ public final class MenuManager {
         GATE.open(player.getUUID(), menu, nonce, now());
         PacketDistributor.sendToPlayer(player, new GuiPayloads.OpenMenu(menu, nonce, definition.title(), definition.buttons().stream()
             .map(a -> new GuiPayloads.ButtonView(a.id(), a.label(), a.icon(),
-                a.allowed(node -> PermissionService.allows(player, node)))).toList()));
+                a.allowed(node -> PermissionService.allows(player, node)))).toList(), PermissionService.allows(player, "zian.gui.edit")));
         return true;
     }
     public static void click(ServerPlayer player, GuiPayloads.Click click) {
@@ -102,6 +113,6 @@ public final class MenuManager {
         if (!result) player.sendSystemMessage(Component.literal("No se pudo confirmar la ejecución. Revisa los permisos y que el comando exista."));
     }
     public static void closed(ServerPlayer player, long session) { GATE.close(player.getUUID(), session); }
-    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) { GATE.remove(event.getEntity().getUUID()); }
-    public static void onStop(ServerStoppedEvent event) { GATE.clear(); }
+    public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) { GATE.remove(event.getEntity().getUUID()); MenuEditor.remove(event.getEntity().getUUID()); }
+    public static void onStop(ServerStoppedEvent event) { GATE.clear(); MenuEditor.clear(); }
 }

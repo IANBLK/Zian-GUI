@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.0-beta.7
+
+- Editor administrativo dentro del juego: botón Editar y `/ZianGui edit [menú]`.
+- Añadir, renombrar, cambiar comando/permisos/icono, ordenar y eliminar botones.
+- Icono tomado del objeto en la mano principal al guardar, sin consumirlo.
+- Guardado atómico en el archivo original, con respaldo `.json.bak` y validación completa.
+- Rechaza ediciones concurrentes y cambios externos sin sobrescribirlos.
+- Comprueba `zian.gui.edit` en cada guardado; sesiones personales y límites de frecuencia.
+- Permite menús vacíos para quitar todas las integraciones y añadir otras después.
+- Protocolo 3: requiere Beta 7 en cliente y servidor; conserva JSON existentes.
+- La Beta 6 fue confirmada por el usuario en Youer, incluidos los nueve botones y el reinicio.
+
 ## 0.1.0-beta.6
 
 - Actualiza la acción Gradle de GitHub a v5 (Node.js 24) para eliminar el aviso de Node.js 20.

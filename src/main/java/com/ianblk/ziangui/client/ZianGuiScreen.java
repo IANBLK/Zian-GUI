@@ -35,6 +35,8 @@ public final class ZianGuiScreen extends Screen {
         int rows = Math.max(1, (count + 1) / 2);
         panelHeight = Math.min(108 + rows * 38, height - 16);
         left = (width - panelWidth) / 2; top = (height - panelHeight) / 2;
+        if (menu.editable()) addRenderableWidget(new ThemedButton(left + panelWidth - 60, top + 8, 48, 18,
+            Component.literal("Editar"), b -> PacketDistributor.sendToServer(new com.ianblk.ziangui.network.EditorPayloads.Request(menu.menuId()))));
         int cardWidth = (panelWidth - 32) / 2;
         int cardHeight = 30;
         for (int i = 0; i < count; i++) {
@@ -74,7 +76,7 @@ public final class ZianGuiScreen extends Screen {
         if (minecraft != null && minecraft.getConnection() != null)
             PacketDistributor.sendToServer(new GuiPayloads.Closed(menu.session()));
     }
-    private static class ThemedButton extends Button {
+    static class ThemedButton extends Button {
         protected ThemedButton(int x, int y, int width, int height, Component label, OnPress press) {
             super(x, y, width, height, label, press, DEFAULT_NARRATION);
         }

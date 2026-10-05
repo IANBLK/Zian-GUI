@@ -18,11 +18,13 @@ public final class MenuConfig {
         public Menu { buttons = List.copyOf(buttons); }
     }
     private Map<String, Menu> menus = Map.of();
+    private Map<String, Path> sources = Map.of();
     public Map<String, Menu> menus() { return menus; }
     public Menu get(String id) { return menus.get(id); }
 
     public void reload(Path directory) throws IOException {
         Files.createDirectories(directory);
+        if (Files.isSymbolicLink(directory)) throw new IOException("Directorio de menús no regular");
         List<Path> files;
         try (var stream = Files.list(directory)) {
             files = stream.filter(p -> p.getFileName().toString().endsWith(".json")).sorted().limit(17).toList();
@@ -36,18 +38,71 @@ public final class MenuConfig {
         }
         if (files.size() > 16) throw new IOException("Máximo 16 menús");
         Map<String, Menu> next = new LinkedHashMap<>();
+        Map<String, Path> paths = new LinkedHashMap<>();
         for (Path file : files) {
             try {
                 if (Files.isSymbolicLink(file) || !Files.isRegularFile(file)) throw new IllegalArgumentException("Archivo no regular");
                 if (Files.size(file) > 65_536) throw new IllegalArgumentException("Máximo 64 KiB por menú");
                 Menu menu = parse(Files.readString(file, StandardCharsets.UTF_8));
                 if (next.putIfAbsent(menu.id(), menu) != null) throw new IllegalArgumentException("ID de menú duplicado");
+                paths.put(menu.id(), file);
             } catch (RuntimeException error) {
                 throw new IOException(file.getFileName() + ": " + error.getMessage(), error);
             }
         }
         if (!next.containsKey("principal")) throw new IOException("Debe existir un menú con id principal");
         menus = Collections.unmodifiableMap(next); // Atomic logical swap after ALL files validate.
+        sources = Map.copyOf(paths);
+    }
+    public static String json(Menu menu) {
+        JsonObject root = new JsonObject();
+        root.addProperty("id", menu.id()); root.addProperty("title", menu.title()); root.addProperty("permission", menu.permission());
+        JsonArray buttons = new JsonArray();
+        for (Action a : menu.buttons()) {
+            JsonObject b = new JsonObject();
+            b.addProperty("id", a.id()); b.addProperty("name", a.label()); b.addProperty("icon", a.icon());
+            JsonArray nodes = new JsonArray(); a.permissions().forEach(nodes::add);
+            b.add("permissions", nodes); b.addProperty("command", a.command()); buttons.add(b);
+        }
+        root.add("buttons", buttons);
+        return new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(root);
+    }
+    /** Revision covers all menus, including edits made outside the game. */
+    public String revision() {
+        try {
+            var hash = java.security.MessageDigest.getInstance("SHA-256");
+            new TreeMap<>(menus).values().forEach(m -> hash.update(json(m).getBytes(StandardCharsets.UTF_8)));
+            return HexFormat.of().formatHex(hash.digest());
+        } catch (java.security.NoSuchAlgorithmException impossible) { throw new IllegalStateException(impossible); }
+    }
+    public void save(Path directory, String expectedRevision, Menu replacement) throws IOException {
+        Menu validated = parse(json(replacement));
+        for (Path source : sources.values()) {
+            if (!Files.isRegularFile(source, LinkOption.NOFOLLOW_LINKS)) throw new IOException("Un archivo del menú cambió o desapareció; vuelve a cargar los menús.");
+        }
+        MenuConfig fresh = new MenuConfig(); fresh.reload(directory);
+        if (!fresh.revision().equals(expectedRevision) || !fresh.sources.equals(sources)) throw new IOException("El menú cambió. Cierra y vuelve a abrir el editor (recarga si editaste archivos).");
+        Path target = fresh.sources.get(validated.id());
+        if (target == null) throw new IOException("Menú inexistente");
+        byte[] bytes = json(validated).getBytes(StandardCharsets.UTF_8);
+        if (bytes.length > 65_536) throw new IOException("Máximo 64 KiB por menú");
+        Path backup = target.resolveSibling(target.getFileName() + ".bak");
+        if (Files.exists(backup, LinkOption.NOFOLLOW_LINKS) && !Files.isRegularFile(backup, LinkOption.NOFOLLOW_LINKS)) throw new IOException("Respaldo no regular");
+        Path temp = Files.createTempFile(directory, ".edit-", ".tmp");
+        Path backupTemp = null;
+        try {
+            backupTemp = Files.createTempFile(directory, ".backup-", ".tmp");
+            Files.copy(target, backupTemp, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(backupTemp, backup, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            try (var channel = java.nio.channels.FileChannel.open(temp, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                var buffer = java.nio.ByteBuffer.wrap(bytes);
+                while (buffer.hasRemaining()) channel.write(buffer);
+                channel.force(true);
+            }
+            Files.move(temp, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+            Map<String, Menu> next = new LinkedHashMap<>(fresh.menus); next.put(validated.id(), validated);
+            menus = Collections.unmodifiableMap(next); sources = fresh.sources;
+        } finally { Files.deleteIfExists(temp); if (backupTemp != null) Files.deleteIfExists(backupTemp); }
     }
     public static Menu parse(String json) {
         validateJson(json);
@@ -58,8 +113,8 @@ public final class MenuConfig {
         String permission = permission(string(root, "permission", 128));
         if (title.isBlank()) throw new IllegalArgumentException("Título vacío");
         JsonArray buttons = root.getAsJsonArray("buttons");
-        if (buttons == null || buttons.isEmpty() || buttons.size() > MAX_BUTTONS)
-            throw new IllegalArgumentException("Se requieren entre 1 y 24 botones");
+        if (buttons == null || buttons.size() > MAX_BUTTONS)
+            throw new IllegalArgumentException("Máximo 24 botones");
         List<Action> actions = new ArrayList<>(); Set<String> ids = new HashSet<>();
         for (JsonElement element : buttons) {
             JsonObject b = element.getAsJsonObject();

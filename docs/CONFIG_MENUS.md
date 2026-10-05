@@ -1,6 +1,6 @@
-# Menús configurables — Beta 6
+# Menús configurables — Beta 7
 
-Instalar `zian-gui-0.1.0-beta.6.jar` en servidor y cliente, retirando el JAR anterior.
+Instalar `zian-gui-0.1.0-beta.7.jar` en servidor y cliente, retirando el JAR anterior.
 No requiere cambios del startup. El protocolo cambió: ambos lados necesitan esta versión.
 
 ## Archivo del servidor
@@ -13,7 +13,9 @@ La interfaz tiene dos columnas; cambia de página cuando no cabe todo.
 
 Esta es una implementación parcial del diseño general: solo iconos de items y
 comandos como jugador. El formato completo de la especificación futura, las acciones
-encadenadas, posiciones manuales, consola, OP temporal y editor todavía no están disponibles.
+encadenadas, espacios de posición manuales, consola y OP temporal todavía no están disponibles.
+La Beta 7 incorpora un [editor de botones dentro del juego](EDITOR.md), con icono de la mano,
+nombre, comando, permisos, orden y eliminación, protegido por `zian.gui.edit`.
 Los campos no soportados se rechazan para evitar configuraciones que parezcan funcionar.
 
 Ejemplo mínimo:
@@ -99,4 +101,4 @@ Un comando Bukkit existente que deniegue permisos o falle no se reintenta por ot
 7. Sin `zian.gui.reload`, una cuenta normal no debe poder recargar.
 
 La compilación y las pruebas de configuración no sustituyen estos tests reales de las
-interfaces de los otros mods. El editor dentro del juego queda para la siguiente fase.
+interfaces de los otros mods. El editor dentro del juego se documenta en [EDITOR.md](EDITOR.md).

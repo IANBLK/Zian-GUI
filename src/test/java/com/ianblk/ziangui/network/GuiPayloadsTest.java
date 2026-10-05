@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GuiPayloadsTest {
     @Test void menuViewRoundTripsWithoutServerCommandsOrPermissionNodes() {
         var p = new GuiPayloads.OpenMenu("principal", 123, "Menú principal",
-            List.of(new GuiPayloads.ButtonView("spawn", "Spawn", "minecraft:compass", false)));
+            List.of(new GuiPayloads.ButtonView("spawn", "Spawn", "minecraft:compass", false)), false);
         var buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY);
         try {
             GuiPayloads.OpenMenu.CODEC.encode(buf, p);

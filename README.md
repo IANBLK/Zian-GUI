@@ -3,7 +3,7 @@
 Pantalla propia para Minecraft 1.21.1 con NeoForge, diseñada para servidores Youer.
 Autor: IANBLK. Licencia MIT.
 
-## 0.1.0-beta.6 — menús configurables
+## 0.1.0-beta.7 — editor dentro del juego
 
 `/ZianGui` y `/ZianGui open` abren el menú principal con nueve botones:
 **Spawn, Curar Pokémon, PC, Ender Chest, Fly, Gachas, Misiones, GTS y Medallas**.
@@ -14,7 +14,11 @@ Pulsa **Z** para abrir el menú principal. Puedes cambiarla en Controles → Zia
 
 Los menús JSON se crean en `config/zian_gui/menus/` en el servidor.
 `/ZianGui open <menú>` abre otro menú y `/ZianGui reload` aplica cambios sin reiniciar.
-Todavía no incluye editor, `list`, `edit`, `check` ni ejecución como consola u OP.
+Con `zian.gui.edit`, el botón **Editar** o `/ZianGui edit [menú]` abre el editor:
+añadir, renombrar, cambiar comando/permisos, elegir el icono de la mano, reordenar
+y eliminar botones. Guarda en el servidor con respaldo y sin reiniciar.
+Guía completa: [EDITOR.md](docs/EDITOR.md).
+No incluye `list`, `check`, creación de menús desde la interfaz ni ejecución como consola u OP.
 Las integraciones usan `/ZianUtilities gacha`, `/ZianUtilities quest`, `/ZianGTS` y `/medals`.
 La raíz `/zgui` no se registra.
 
@@ -22,7 +26,7 @@ La raíz `/zgui` no se registra.
 
 - Minecraft 1.21.1, Java 21 y NeoForge 21.1.228 o posterior de la rama 21.1.
 - Instalar **el mismo JAR** en `mods/` del cliente y del servidor y reiniciar ambos.
-- El protocolo de red es obligatorio en ambos lados.
+- El protocolo de red 3 es obligatorio en ambos lados: no mezclar con Betas 1–6.
 - LuckPerms no es una dependencia obligatoria. En Youer se consulta el permiso Bukkit
   del jugador, compatible con LuckPerms instalado como plugin.
 - El mod no requiere Cobblemon ni EternalCore para cargar. Para que sus botones hagan
@@ -86,7 +90,7 @@ Consulta el [formato y las pruebas de configuración](docs/CONFIG_MENUS.md).
 ## Descargar y probar
 
 [Actions](https://github.com/IANBLK/Zian-GUI/actions): abrir la ejecución verde de `dev`,
-descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.6.jar`**.
+descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.7.jar`**.
 Los artifacts duran 14 días y requieren iniciar sesión en GitHub.
 
 Las pruebas automatizadas cubren permisos, sesiones y límites del protocolo.

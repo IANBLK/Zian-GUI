@@ -10,10 +10,25 @@ public final class GuiNetwork {
     public static Consumer<GuiPayloads.OpenMenu> openClient = p -> {};
     public static Consumer<GuiPayloads.Close> closeClient = p -> {};
     public static Consumer<GuiPayloads.Feedback> feedbackClient = p -> {};
+    public static Consumer<EditorPayloads.Open> editorClient = p -> {};
     private GuiNetwork() {}
     public static void register(RegisterPayloadHandlersEvent event) {
         // Required on both endpoints: do not use optional() on this registrar.
-        var r = event.registrar("2");
+        var r = event.registrar("3");
+        r.playToServer(EditorPayloads.Request.TYPE, EditorPayloads.Request.CODEC,
+            (p, ctx) -> ctx.enqueueWork(() -> {
+                if (ctx.player() instanceof ServerPlayer player) com.ianblk.ziangui.server.MenuEditor.open(player, p.menuId());
+            }));
+        r.playToServer(EditorPayloads.Change.TYPE, EditorPayloads.Change.CODEC,
+            (p, ctx) -> ctx.enqueueWork(() -> {
+                if (ctx.player() instanceof ServerPlayer player) com.ianblk.ziangui.server.MenuEditor.change(player, p);
+            }));
+        r.playToServer(EditorPayloads.Closed.TYPE, EditorPayloads.Closed.CODEC,
+            (p, ctx) -> ctx.enqueueWork(() -> {
+                if (ctx.player() instanceof ServerPlayer player) com.ianblk.ziangui.server.MenuEditor.close(player, p.session());
+            }));
+        r.playToClient(EditorPayloads.Open.TYPE, EditorPayloads.Open.CODEC,
+            (p, ctx) -> ctx.enqueueWork(() -> editorClient.accept(p)));
         r.playToServer(GuiPayloads.OpenRequest.TYPE, GuiPayloads.OpenRequest.CODEC,
             (p, ctx) -> ctx.enqueueWork(() -> {
                 if (ctx.player() instanceof ServerPlayer player) MenuManager.open(player, p.menuId());

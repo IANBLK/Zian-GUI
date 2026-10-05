@@ -28,10 +28,16 @@ public final class ZianGuiClient {
         GuiNetwork.closeClient = p -> {
             var mc = Minecraft.getInstance();
             if (mc.screen instanceof ZianGuiScreen screen && screen.session() == p.session()) mc.setScreen(null);
+            if (mc.screen instanceof MenuEditorScreen screen && screen.session() == p.session()) mc.setScreen(null);
+        };
+        GuiNetwork.editorClient = p -> {
+            var mc = Minecraft.getInstance();
+            if (mc.player != null && mc.level != null) mc.setScreen(new MenuEditorScreen(p));
         };
         GuiNetwork.feedbackClient = p -> {
             var mc = Minecraft.getInstance();
             if (mc.screen instanceof ZianGuiScreen screen && screen.session() == p.session()) screen.feedback(p.text());
+            else if (mc.screen instanceof MenuEditorScreen screen && screen.session() == p.session()) screen.feedback(p.text());
             else if (mc.player != null) mc.player.displayClientMessage(net.minecraft.network.chat.Component.literal(p.text()), false);
         };
     }
@@ -44,7 +50,7 @@ public final class ZianGuiClient {
     }
     private static void logout(ClientPlayerNetworkEvent.LoggingOut event) {
         var mc = Minecraft.getInstance();
-        if (mc.screen instanceof ZianGuiScreen) mc.setScreen(null);
+        if (mc.screen instanceof ZianGuiScreen || mc.screen instanceof MenuEditorScreen) mc.setScreen(null);
         while (OPEN.consumeClick()) { /* discard requests from the old connection */ }
     }
 }
