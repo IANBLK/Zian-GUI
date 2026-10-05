@@ -1,6 +1,6 @@
-# Menús configurables — Beta 5
+# Menús configurables — Beta 6
 
-Instalar `zian-gui-0.1.0-beta.5.jar` en servidor y cliente, retirando el JAR anterior.
+Instalar `zian-gui-0.1.0-beta.6.jar` en servidor y cliente, retirando el JAR anterior.
 No requiere cambios del startup. El protocolo cambió: ambos lados necesitan esta versión.
 
 ## Archivo del servidor

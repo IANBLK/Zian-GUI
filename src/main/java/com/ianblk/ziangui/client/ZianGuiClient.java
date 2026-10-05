@@ -3,6 +3,7 @@ package com.ianblk.ziangui.client;
 import com.ianblk.ziangui.network.GuiNetwork;
 import com.ianblk.ziangui.network.GuiPayloads;
 import com.mojang.blaze3d.platform.InputConstants;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.IEventBus;
@@ -14,7 +15,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public final class ZianGuiClient {
     private static final KeyMapping OPEN = new KeyMapping("key.ziangui.open", InputConstants.Type.KEYSYM,
-        InputConstants.UNKNOWN.getValue(), "key.categories.ziangui");
+        GLFW.GLFW_KEY_Z, "key.categories.ziangui");
     private ZianGuiClient() {}
     public static void init(IEventBus modBus) {
         modBus.addListener((RegisterKeyMappingsEvent event) -> event.register(OPEN));

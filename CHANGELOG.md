@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-beta.6
+
+- La tecla predeterminada para abrir el menú principal ahora es Z, configurable en Controles.
+- Conserva los permisos del servidor y las asignaciones de teclas guardadas del jugador.
+
 ## 0.1.0-beta.5
 
 - Corrige Gachas, Misiones y GTS en Youer cuando sus comandos no están en el mapa Bukkit.
