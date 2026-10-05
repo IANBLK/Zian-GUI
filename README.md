@@ -1,52 +1,77 @@
 # Zian GUI
 
-Menús configurables con pantalla propia para Minecraft 1.21.1, NeoForge y Youer.
-Licencia MIT. Autor: IANBLK.
+Pantalla propia para Minecraft 1.21.1 con NeoForge, diseñada para servidores Youer.
+Autor: IANBLK. Licencia MIT.
 
-## Estado: 0.0.1 — base
+## 0.1.0-beta.1 — primera pantalla
 
-Esta versión solo registra el mod y escribe `[ZianGUI] cargado` en el log.
-Todavía no tiene pantallas, comandos, JSON, permisos ni editor.
+`/ZianGui` y `/ZianGui open` abren el menú principal con dos botones:
+**Spawn** (`spawn`) y **Curar Pokémon** (`healpokemon`). La pantalla usa tarjetas oscuras,
+bordes dorados e iconos de Minecraft. Los botones sin permiso se muestran bloqueados.
+En Controles se puede asignar una tecla para abrirla; inicialmente no tiene tecla asignada.
 
-## Requisitos e instalación
+Esta fase usa dos acciones fijas. Todavía no incluye menús JSON, editor, `reload`,
+`list`, `edit`, `check` ni apertura de las interfaces de otros mods.
+Las integraciones futuras conservarán `/ZianUtilities` y `/ZianGTS`.
+La raíz `/zgui` no se registra.
 
-- Java 21 y Minecraft 1.21.1.
-- NeoForge 21.1.228 o posterior de la rama 21.1 (base alineada con Zian GTS).
-- Para probar la integración futura: Youer 1.21.1.
-- Instalar el mismo JAR en `mods/` del cliente y del servidor.
-- LuckPerms será opcional; no es una dependencia de esta base.
-- No requiere Cobblemon, Zian GTS, Zian RCT ni Zian Utilities.
+## Instalación
 
-Arranca cliente y servidor y comprueba `[ZianGUI] cargado` en ambos logs.
-La carga en Youer necesita una prueba real de Ian; el CI no la certifica.
+- Minecraft 1.21.1, Java 21 y NeoForge 21.1.228 o posterior de la rama 21.1.
+- Instalar **el mismo JAR** en `mods/` del cliente y del servidor y reiniciar ambos.
+- El protocolo de red es obligatorio en ambos lados.
+- LuckPerms no es una dependencia obligatoria. En Youer se consulta el permiso Bukkit
+  del jugador, compatible con LuckPerms instalado como plugin.
+- El mod no requiere Cobblemon ni EternalCore para cargar. Para que sus botones hagan
+  algo, el servidor sí necesita proporcionar los comandos `spawn` y `healpokemon`.
 
-## Descargar builds
+## Permisos en Youer
 
-[Actions](https://github.com/IANBLK/Zian-GUI/actions): abre una ejecución verde,
-descarga el artifact `zian-gui-<commit>` y extrae `zian-gui-0.0.1.jar`.
+Para abrir: `zian.gui.open` y `zian.gui.menu.principal`.
+Para Spawn: `eternalcore.spawn`. Para curar: `cobblemon.command.healpokemon`.
+
+Ejemplo desde consola para una cuenta de prueba (sustituir `IANBLK`):
+
+```text
+lp user IANBLK permission set zian.gui.open true
+lp user IANBLK permission set zian.gui.menu.principal true
+lp user IANBLK permission set eternalcore.spawn true
+lp user IANBLK permission set cobblemon.command.healpokemon true
+```
+
+El comando de destino también puede requerir otros permisos propios del servidor.
+Comprueba primero que `/spawn` y `/healpokemon` funcionen manualmente con esa cuenta.
+En NeoForge puro, sin Bukkit, esta primera fase permite acciones protegidas solo a OP
+de nivel 2 o superior; todavía no integra un proveedor de permisos de NeoForge.
+
+## Seguridad
+
+Los comandos y permisos se quedan en el servidor. El cliente solo envía identificadores
+y una sesión temporal. El servidor vuelve a comprobar permisos al pulsar, limita las
+solicitudes, descarta sesiones antiguas y consume la sesión antes de ejecutar una acción.
+Las sesiones caducan a los cinco minutos y se limpian al desconectar.
+
+Los comandos se ejecutan como el jugador, sin conceder OP ni usar la consola.
+Una denegación explícita de permisos se respeta incluso para OP. Si el puente Bukkit falla,
+se deniega la acción; una ejecución incierta nunca se reintenta automáticamente.
+
+## Descargar y probar
+
+[Actions](https://github.com/IANBLK/Zian-GUI/actions): abrir la ejecución verde de `dev`,
+descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.1.jar`**.
 Los artifacts duran 14 días y requieren iniciar sesión en GitHub.
-[Releases](https://github.com/IANBLK/Zian-GUI/releases) publica el JAR al crear
-una etiqueta `v*`; las etiquetas con guion son versiones preliminares.
 
-## Compilar
-
-Linux: `./gradlew build --no-daemon`. Windows: `gradlew.bat build --no-daemon`.
-Se incluyen Gradle Wrapper 8.11 y ModDevGradle 2.0.107, como en Zian GTS.
-El JAR jugable queda en `build/libs/`.
+Las pruebas automatizadas cubren permisos, sesiones y límites del protocolo.
+La validación visual y de los comandos en Youer requiere la prueba real del servidor;
+una compilación correcta no la certifica. Seguir [la guía de prueba](docs/PHASE1_TEST.md).
 
 ## Desarrollo
 
-Trabajar en `dev`. Integrar a `main` por PR cuando esté compilado y probado.
-La especificación está en [docs/ESPECIFICACION_ZIAN_GUI.md](docs/ESPECIFICACION_ZIAN_GUI.md).
-La revisión de interfaz está en [docs/ANALISIS_ZIANRCT_UI.md](docs/ANALISIS_ZIANRCT_UI.md).
+Compilar: `./gradlew build --no-daemon` (Linux), `gradlew.bat build --no-daemon` (Windows).
+El JAR jugable queda en `build/libs/`.
+Trabajar en `dev`; integrar a `main` por PR después de probar en Youer.
 
-Comandos, permisos y ejemplos de menús se añadirán al implementar sus fases.
-La instalación obligatoria en ambos lados se comprobará mediante el protocolo
-requerido de red desde la fase de networking; `side="BOTH"` en las dependencias
-por sí solo no impide que un cliente sin este mod se conecte a esta base.
-
-## Convención de comandos
-
-La raíz prevista es `/ZianGui` (respetando mayúsculas), con las secciones `open`, `reload`, `list`, `edit` y `check`. Esta base 0.0.1 todavía no registra comandos: la constante compartida y los documentos fijan el nombre para su implementación. Los permisos `zian.gui.*` y las rutas de configuración conservan sus nombres.
-
-Las integraciones deben usar `/ZianUtilities` para Utilities y `/ZianGTS` para GTS. No se usará `/zgui` como raíz del mod.
+- [Cambios](CHANGELOG.md)
+- [Especificación](docs/ESPECIFICACION_ZIAN_GUI.md)
+- [Guía de desarrollo](docs/GUIA_DE_PASOS_PARA_CHATGPT.md)
+- [Referencia visual Zian RCT](docs/ANALISIS_ZIANRCT_UI.md)
