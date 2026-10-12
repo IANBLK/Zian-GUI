@@ -23,16 +23,16 @@ public final class MenuEditor {
     public static boolean open(ServerPlayer player, String menu) {
         if (!LIMITS.request(player.getUUID(), now())) return false;
         if (!PermissionService.allows(player, "zian.gui.edit")) {
-            player.sendSystemMessage(Component.literal("No tienes permiso para editar menús.")); return false;
+            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("No tienes permiso para editar menús."))); return false;
         }
         if (!NetworkRegistry.hasChannel(player.connection, EditorPayloads.Open.TYPE.id())) {
-            player.sendSystemMessage(Component.literal("Instala la misma versión de Zian GUI en cliente y servidor.")); return false;
+            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("Instala la misma versión de Zian GUI en cliente y servidor."))); return false;
         }
         return show(player, menu, "Selecciona un botón o pulsa Añadir.");
     }
     private static boolean show(ServerPlayer player, String menu, String message) {
         var config = MenuManager.configuration(); var definition = config.get(menu);
-        if (definition == null) { player.sendSystemMessage(Component.literal("Menú inexistente o configuración inválida.")); return false; }
+        if (definition == null) { player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("Menú inexistente o configuración inválida."))); return false; }
         long nonce = ThreadLocalRandom.current().nextLong();
         SESSIONS.put(player.getUUID(), new EditSession(menu, nonce, now() + 300_000, config.revision()));
         PacketDistributor.sendToPlayer(player, new EditorPayloads.Open(nonce, MenuConfig.json(definition), message));

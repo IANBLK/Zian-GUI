@@ -79,13 +79,13 @@ public final class MenuManager {
         if (!GATE.request(player.getUUID(), now())) return false;
         var definition = CONFIG.get(menu);
         if (definition == null) {
-            player.sendSystemMessage(Component.literal("Menú inexistente o configuración inválida.")); return false;
+            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("Menú inexistente o configuración inválida."))); return false;
         }
         if (!PermissionService.allows(player, "zian.gui.open") || !PermissionService.allows(player, definition.permission())) {
-            player.sendSystemMessage(Component.literal("No tienes permiso para abrir este menú.")); return false;
+            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("No tienes permiso para abrir este menú."))); return false;
         }
         if (!NetworkRegistry.hasChannel(player.connection, GuiPayloads.OpenMenu.TYPE.id())) {
-            player.sendSystemMessage(Component.literal("Instala la misma versión de Zian GUI en el cliente.")); return false;
+            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("Instala la misma versión de Zian GUI en el cliente."))); return false;
         }
         long nonce = ThreadLocalRandom.current().nextLong();
         GATE.open(player.getUUID(), menu, nonce, now());
@@ -110,7 +110,7 @@ public final class MenuManager {
         PacketDistributor.sendToPlayer(player, new GuiPayloads.Close(click.session()));
         boolean result = CommandBridge.execute(player, action.command());
         ZianGui.LOGGER.info("[ZianGUI] action=button playerUuid={} menu={} button={} result={}", player.getUUID(), definition.id(), action.id(), result ? "DISPATCHED" : "NOT_CONFIRMED");
-        if (!result) player.sendSystemMessage(Component.literal("No se pudo confirmar la ejecución. Revisa los permisos y que el comando exista."));
+        if (!result) player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("No se pudo confirmar la ejecución. Revisa los permisos y que el comando exista.")));
     }
     public static void closed(ServerPlayer player, long session) { GATE.close(player.getUUID(), session); }
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) { GATE.remove(event.getEntity().getUUID()); MenuEditor.remove(event.getEntity().getUUID()); }
