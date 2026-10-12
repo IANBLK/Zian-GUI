@@ -14,7 +14,7 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /** Administrative UI; changes are requests, never local authority or command execution. */
-public final class MenuEditorScreen extends Screen {
+public final class MenuEditorScreen extends ResponsiveScreen {
     private final EditorPayloads.Open data;
     private final MenuConfig.Menu menu;
     private int left, top, panelWidth, panelHeight, page, rows, rowHeight;
@@ -34,7 +34,7 @@ public final class MenuEditorScreen extends Screen {
     }
     public long session() { return data.session(); }
     public void feedback(String message) { feedback = message; pending = false; deleteConfirmed = false; rebuildWidgets(); }
-    @Override protected void init() {
+    @Override protected void init() {fitViewport(440,330);
         panelWidth = Math.min(440, width - 16); panelHeight = Math.min(244, height - 16);
         left = (width - panelWidth) / 2; top = (height - panelHeight) / 2;
         if (draft == null) list(); else form();
@@ -104,7 +104,7 @@ public final class MenuEditorScreen extends Screen {
     private String clipped(String text, int max) { return font.width(text) > max ? font.plainSubstrByWidth(text, Math.max(1, max - 12)) + "…" : text; }
     @Override public boolean isPauseScreen() { return false; }
     @Override public void renderBackground(GuiGraphics g, int x, int y, float tick) { g.fill(0, 0, width, height, 0x90000000); }
-    @Override public void render(GuiGraphics g, int x, int y, float tick) {
+    @Override protected void renderCanvas(GuiGraphics g, int x, int y, float tick) {
         renderBackground(g, x, y, tick);
         g.fill(left, top, left + panelWidth, top + panelHeight, 0xF0181818);
         g.fill(left, top, left + panelWidth, top + 3, 0xFFF2C14E);
@@ -119,7 +119,7 @@ public final class MenuEditorScreen extends Screen {
         }
         var lines = font.split(Component.literal(feedback), panelWidth - 24);
         for (int i = 0; i < Math.min(2, lines.size()); i++) g.drawString(font, lines.get(i), left + 12, top + panelHeight - 54 + i * 10, 0xFFFFCC66);
-        super.render(g, x, y, tick);
+        renderWidgets(g, x, y, tick);
     }
     @Override public void removed() {
         if (minecraft != null && minecraft.getConnection() != null) PacketDistributor.sendToServer(new EditorPayloads.Closed(data.session()));

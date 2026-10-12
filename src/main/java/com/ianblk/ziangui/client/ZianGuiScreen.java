@@ -14,7 +14,7 @@ import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /** Local adaptation of the Zian RCT charcoal/gold card style; no dependency on RCT. */
-public final class ZianGuiScreen extends Screen {
+public final class ZianGuiScreen extends ResponsiveScreen {
     private final GuiPayloads.OpenMenu menu;
     private String feedback = "";
     private int left, top, panelWidth, panelHeight;
@@ -24,7 +24,7 @@ public final class ZianGuiScreen extends Screen {
     }
     public long session() { return menu.session(); }
     public void feedback(String text) { feedback = text; }
-    @Override protected void init() {
+    @Override protected void init() {fitViewport(440,330);
         panelWidth = Math.min(304, width - 16);
         int rowsPerPage = Math.max(1, Math.min(6, (height - 16 - 108) / 38));
         int perPage = rowsPerPage * 2;
@@ -60,7 +60,7 @@ public final class ZianGuiScreen extends Screen {
     @Override public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         graphics.fill(0, 0, width, height, 0x90000000);
     }
-    @Override public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    @Override protected void renderCanvas(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics, mouseX, mouseY, partialTick);
         graphics.fill(left, top, left + panelWidth, top + panelHeight, 0xF0181818);
         graphics.fill(left, top, left + panelWidth, top + 3, 0xFFF2C14E);
@@ -70,7 +70,7 @@ public final class ZianGuiScreen extends Screen {
         graphics.drawCenteredString(font, Component.literal(heading), width / 2, top + 30, 0xFFAAAAAA);
         if (!feedback.isEmpty()) graphics.drawWordWrap(font, Component.literal(feedback), left + 12,
             top + panelHeight - 54, panelWidth - 24, 0xFFFFAA55);
-        super.render(graphics, mouseX, mouseY, partialTick);
+        renderWidgets(graphics, mouseX, mouseY, partialTick);
     }
     @Override public void removed() {
         if (minecraft != null && minecraft.getConnection() != null)
