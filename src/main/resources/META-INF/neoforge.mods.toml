@@ -2,12 +2,15 @@ modLoader="javafml"
 loaderVersion="[4,)"
 license="${mod_license}"
 
+issueTrackerURL="https://github.com/IANBLK/Zian-GUI/issues"
+
 [[mods]]
 modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 authors="IANBLK"
-description='''Configurable menus for Minecraft. Base build: no GUI yet.'''
+displayURL="https://github.com/IANBLK/Zian-GUI"
+description='''Configurable native menus with responsive layouts, permission checks and shortcuts to server commands and Zian integrations.'''
 
 [[dependencies.ziangui]]
 modId="neoforge"
