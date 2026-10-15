@@ -3,7 +3,7 @@
 Pantalla propia para Minecraft 1.21.1 con NeoForge, diseñada para servidores Youer.
 Autor: IANBLK. Licencia MIT.
 
-## 0.1.0-beta.7 — editor dentro del juego
+## 0.1.0 Release — editor dentro del juego
 
 `/ZianGui` y `/ZianGui open` abren el menú principal con nueve botones:
 **Spawn, Curar Pokémon, PC, Ender Chest, Fly, Gachas, Misiones, GTS y Medallas**.
@@ -89,9 +89,7 @@ Consulta el [formato y las pruebas de configuración](docs/CONFIG_MENUS.md).
 
 ## Descargar y probar
 
-[Actions](https://github.com/IANBLK/Zian-GUI/actions): abrir la ejecución verde de `dev`,
-descargar el artifact `zian-gui-<commit>` y extraer **`zian-gui-0.1.0-beta.7.jar`**.
-Los artifacts duran 14 días y requieren iniciar sesión en GitHub.
+Descarga **`zian-gui-0.1.0.jar`** de [Releases](https://github.com/IANBLK/Zian-GUI/releases/latest). Instala la misma versión en cliente y servidor. Los artifacts temporales de Actions son compilaciones de desarrollo.
 
 Las pruebas automatizadas cubren permisos, sesiones y límites del protocolo.
 La validación visual y de los comandos en Youer requiere la prueba real del servidor;
@@ -101,7 +99,7 @@ una compilación correcta no la certifica. Seguir [la guía de prueba](docs/PHAS
 
 Compilar: `./gradlew build --no-daemon` (Linux), `gradlew.bat build --no-daemon` (Windows).
 El JAR jugable queda en `build/libs/`.
-Trabajar en `dev`; integrar a `main` por PR después de probar en Youer.
+La rama `main` contiene la versión pública actual; `dev` conserva la línea de desarrollo.
 
 - [Cambios](CHANGELOG.md)
 - [Especificación](docs/ESPECIFICACION_ZIAN_GUI.md)

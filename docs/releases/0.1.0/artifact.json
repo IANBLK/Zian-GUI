@@ -1,11 +1,17 @@
 {
   "name": "Zian GUI",
   "version": "0.1.0",
-  "previousBeta": "0.1.0-beta.10",
+  "jar": "zian-gui-0.1.0.jar",
   "sha256": "b78d28e8885918d647d1ae4fd7cec2a4c7cc9863830cb2cb570e8d65212f46b7",
   "bytes": 87172,
-  "tests": 37,
-  "failures": 0,
-  "jar": "zian-gui-0.1.0.jar",
-  "validation": "Archive contents match the tested Beta byte-for-byte except version metadata. No gameplay code changed."
+  "tests": {
+    "tests": 37,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "validation": "Uses the already-tested release artifact; this repository sync changes documentation only in addition to the previously validated pending code fixes.",
+  "clientAndServer": true,
+  "minecraft": "1.21.1",
+  "java": 21
 }

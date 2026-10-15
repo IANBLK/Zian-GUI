@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0 Release
+
+- Menú compacto y adaptable, tecla Z configurable, editor administrativo y botones con iconos, comandos y permisos.
+- Conserva menús JSON existentes, sesiones y comprobaciones autoritativas en el servidor.
+- Actualización de documentación: descarga estable, requisitos y estado de la versión. Sin cambios de código jugable respecto al JAR 0.1.0 ya publicado.
+
 ## 0.1.0-beta.7
 
 - Editor administrativo dentro del juego: botón Editar y `/ZianGui edit [menú]`.
