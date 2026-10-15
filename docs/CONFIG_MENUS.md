@@ -14,7 +14,7 @@ La interfaz tiene dos columnas; cambia de página cuando no cabe todo.
 Esta es una implementación parcial del diseño general: solo iconos de items y
 comandos como jugador. El formato completo de la especificación futura, las acciones
 encadenadas, espacios de posición manuales, consola y OP temporal todavía no están disponibles.
-La Beta 7 incorpora un [editor de botones dentro del juego](EDITOR.md), con icono de la mano,
+El mod incluye un [editor de botones dentro del juego](EDITOR.md), con icono de la mano,
 nombre, comando, permisos, orden y eliminación, protegido por `zian.gui.edit`.
 Los campos no soportados se rechazan para evitar configuraciones que parezcan funcionar.
 
@@ -82,7 +82,7 @@ Los permisos adicionales `minecraft.command.*` corresponden al wrapper de Youer.
 Los botones solo abren interfaces: no giran el gacha, aceptan misiones, compran Pokémon
 ni modifican medallas. El mod de destino continúa aplicando sus reglas.
 Si falta un mod/plugin o su comando está desactivado, la GUI no lo ejecutará ni reintentará.
-Desde la Beta 5, si el comando no está registrado en Bukkit, se selecciona el registro
+Si el comando no está registrado en Bukkit, se selecciona el registro
 nativo de Minecraft antes de ejecutar. Esto permite abrir comandos de mods en Youer.
 Un comando Bukkit existente que deniegue permisos o falle no se reintenta por otra vía.
 
