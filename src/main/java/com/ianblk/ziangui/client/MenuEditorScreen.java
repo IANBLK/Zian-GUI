@@ -21,21 +21,21 @@ public final class MenuEditorScreen extends ResponsiveScreen {
     private String feedback;
     private Draft draft;
     private boolean deleteConfirmed, pending;
-    private static final String[] LABELS = {"ID", "Nombre", "Comando", "Permisos", "Posición"};
-    private static final int[] LIMITS = {32, 64, 256, 1031, 2};
+    private static final String[] LABELS = {"ID", "Nombre", "Comando", "Permisos", "Posición", "Requisito"};
+    private static final int[] LIMITS = {32, 64, 256, 1031, 2, 160};
     private static final class Draft {
         String existing = "", icon = "minecraft:barrier";
-        String[] fields = {"", "", "", "", "1"};
+        String[] fields = {"", "", "", "", "1", ""};
         boolean hand;
     }
     public MenuEditorScreen(EditorPayloads.Open data) {
-        super(Component.literal("Zian GUI · Editor"));
+        super(Component.translatableWithFallback("ui.ziangui.858f785a9c06", "Zian GUI · Editor"));
         this.data = data; this.menu = MenuConfig.parse(data.json()); this.feedback = data.message();
     }
     public long session() { return data.session(); }
     public void feedback(String message) { feedback = message; pending = false; deleteConfirmed = false; rebuildWidgets(); }
-    @Override protected void init() {fitViewport(440,330);
-        panelWidth = Math.min(440, width - 16); panelHeight = Math.min(244, height - 16);
+    @Override protected void init() {fitViewport(440,370);
+        panelWidth = Math.min(440, width - 16); panelHeight = Math.min(284, height - 16);
         left = (width - panelWidth) / 2; top = (height - panelHeight) / 2;
         if (draft == null) list(); else form();
     }
@@ -65,22 +65,24 @@ public final class MenuEditorScreen extends ResponsiveScreen {
     }
     private void select(MenuConfig.Action action, int position) {
         draft = new Draft(); draft.existing = action.id(); draft.icon = action.icon();
-        draft.fields = new String[]{action.id(), action.label(), action.command(), String.join(",", action.permissions()), Integer.toString(position)};
+        draft.fields = new String[]{action.id(), action.label(), action.command(), String.join(",", action.permissions()), Integer.toString(position),action.requirement()};
         feedback = "Edita los datos y guarda; el comando se ejecuta como jugador."; deleteConfirmed = false; rebuildWidgets();
     }
     private void form() {
-        rowHeight = Math.max(19, (panelHeight - 110) / 5);
+        rowHeight = Math.max(19, (panelHeight - 110) / 6);
         for (int i = 0; i < LABELS.length; i++) {
             final int field = i;
             var box = addRenderableWidget(new EditBox(font, left + 88, top + 38 + i * rowHeight,
                 panelWidth - 100, 16, Component.literal(LABELS[i])));
             box.setMaxLength(LIMITS[i]); box.setValue(draft.fields[i]); box.setEditable(!pending);
             box.setResponder(value -> draft.fields[field] = value);
-            if (i == 2) box.setTooltip(Tooltip.create(Component.literal("Un comando de jugador. Ejemplo: ZianUtilities gacha")));
-            if (i == 3) box.setTooltip(Tooltip.create(Component.literal("Permisos separados por comas; vacío si no necesitas requisitos adicionales.")));
-            if (i == 4) box.setTooltip(Tooltip.create(Component.literal("Orden de lectura: izquierda, derecha, siguiente fila. Empieza en 1.")));
+            if(i==0)box.setHint(Component.literal("Automático si lo dejas vacío"));
+            if(i==5)box.setTooltip(Tooltip.create(Component.literal("Ayuda para el jugador: rango, coste o condición. Ejemplo: Disponible desde Guardián.")));
+            if (i == 2) box.setTooltip(Tooltip.create(Component.translatableWithFallback("ui.ziangui.5864bb78a301", "Un comando de jugador. Ejemplo: ZianUtilities gacha")));
+            if (i == 3) box.setTooltip(Tooltip.create(Component.translatableWithFallback("ui.ziangui.0c513fe843e8", "Permisos separados por comas; vacío si no necesitas requisitos adicionales.")));
+            if (i == 4) box.setTooltip(Tooltip.create(Component.translatableWithFallback("ui.ziangui.ddaab737dabf", "Orden de lectura: izquierda, derecha, siguiente fila. Empieza en 1.")));
         }
-        var hand = button(left + 36, top + 38 + 5 * rowHeight + 2, panelWidth - 48,
+        var hand = button(left + 36, top + 38 + 6 * rowHeight + 2, panelWidth - 48,
             draft.hand ? "Icono: objeto en la mano" : "Icono: conservar actual", b -> { draft.hand = !draft.hand; rebuildWidgets(); });
         hand.active = !pending;
         int w = Math.min(104, (panelWidth - 40) / 3), y = top + panelHeight - 28;
@@ -97,7 +99,7 @@ public final class MenuEditorScreen extends ResponsiveScreen {
         try {
             int position = delete ? 1 : Integer.parseInt(draft.fields[4]);
             var p = new EditorPayloads.Change(menu.id(), data.session(), draft.existing, delete,
-                draft.fields[0], draft.fields[1], draft.fields[2], draft.fields[3], position, draft.hand);
+                draft.fields[0], draft.fields[1], draft.fields[2], draft.fields[3], position, draft.hand, draft.fields[5]);
             PacketDistributor.sendToServer(p); pending = true; feedback = "Guardando…"; rebuildWidgets();
         } catch (IllegalArgumentException error) { feedback("Revisa los campos y usa una posición entre 1 y 24."); }
     }
@@ -115,7 +117,7 @@ public final class MenuEditorScreen extends ResponsiveScreen {
             ItemStack icon;
             if (draft.hand) icon = minecraft.player == null ? ItemStack.EMPTY : minecraft.player.getMainHandItem();
             else { var id = ResourceLocation.tryParse(draft.icon); icon = new ItemStack(id != null && BuiltInRegistries.ITEM.containsKey(id) ? BuiltInRegistries.ITEM.get(id) : Items.BARRIER); }
-            g.renderItem(icon, left + 12, top + 40 + 5 * rowHeight);
+            g.renderItem(icon, left + 12, top + 40 + 6 * rowHeight);
         }
         var lines = font.split(Component.literal(feedback), panelWidth - 24);
         for (int i = 0; i < Math.min(2, lines.size()); i++) g.drawString(font, lines.get(i), left + 12, top + panelHeight - 54 + i * 10, 0xFFFFCC66);

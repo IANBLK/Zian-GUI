@@ -10,8 +10,9 @@ import java.util.function.Predicate;
 /** Server-owned configuration. Only validated snapshots become visible to players. */
 public final class MenuConfig {
     public static final int MAX_BUTTONS = 24;
-    public record Action(String id, String label, String icon, List<String> permissions, String command) {
-        public Action { permissions = List.copyOf(permissions); }
+    public record Action(String id, String label, String icon, List<String> permissions, String command, String requirement) {
+        public Action(String id,String label,String icon,List<String> permissions,String command){this(id,label,icon,permissions,command,"");}
+        public Action { permissions = List.copyOf(permissions); requirement=requirement==null?"":requirement; if(requirement.length()>160)throw new IllegalArgumentException("Ayuda demasiado larga"); }
         public boolean allowed(Predicate<String> check) { return permissions.stream().allMatch(check); }
     }
     public record Menu(String id, String title, String permission, List<Action> buttons) {
@@ -62,7 +63,7 @@ public final class MenuConfig {
             JsonObject b = new JsonObject();
             b.addProperty("id", a.id()); b.addProperty("name", a.label()); b.addProperty("icon", a.icon());
             JsonArray nodes = new JsonArray(); a.permissions().forEach(nodes::add);
-            b.add("permissions", nodes); b.addProperty("command", a.command()); buttons.add(b);
+            b.add("permissions", nodes); b.addProperty("command", a.command()); if(!a.requirement().isBlank())b.addProperty("requirement",a.requirement()); buttons.add(b);
         }
         root.add("buttons", buttons);
         return new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(root);
@@ -118,7 +119,7 @@ public final class MenuConfig {
         List<Action> actions = new ArrayList<>(); Set<String> ids = new HashSet<>();
         for (JsonElement element : buttons) {
             JsonObject b = element.getAsJsonObject();
-            fields(b, Set.of("id", "name", "icon", "permissions", "command"));
+            fields(b, Set.of("id", "name", "icon", "permissions", "command", "requirement"));
             String buttonId = identifier(string(b, "id", 32));
             if (!ids.add(buttonId)) throw new IllegalArgumentException("Botón duplicado: " + buttonId);
             String label = string(b, "name", 64), icon = string(b, "icon", 128);
@@ -137,7 +138,7 @@ public final class MenuConfig {
                 if (value.length() > 128) throw new IllegalArgumentException("Permiso demasiado largo");
                 permissions.add(permission(value));
             }
-            actions.add(new Action(buttonId, label, icon, permissions, command));
+            actions.add(new Action(buttonId, label, icon, permissions, command, b.has("requirement")?string(b,"requirement",160):""));
         }
         return new Menu(id, title, permission, actions);
     }

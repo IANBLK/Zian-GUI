@@ -1,4 +1,12 @@
 {
   "key.ziangui.open": "Abrir Zian GUI",
-  "key.categories.ziangui": "Zian GUI"
+  "key.categories.ziangui": "Zian GUI",
+  "ui.ziangui.858f785a9c06": "Zian GUI · Editor",
+  "ui.ziangui.5864bb78a301": "Un comando de jugador. Ejemplo: ZianUtilities gacha",
+  "ui.ziangui.0c513fe843e8": "Permisos separados por comas; vacío si no necesitas requisitos adicionales.",
+  "ui.ziangui.ddaab737dabf": "Orden de lectura: izquierda, derecha, siguiente fila. Empieza en 1.",
+  "ui.ziangui.e05f26f33f04": "Zian GUI",
+  "ui.ziangui.2b5f23437f58": "Editar",
+  "ui.ziangui.4b0816bbd5e9": "Cerrar",
+  "ui.ziangui.84a715a785a9": "Volver"
 }

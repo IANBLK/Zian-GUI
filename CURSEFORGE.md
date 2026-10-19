@@ -1,11 +1,11 @@
-# Zian GUI 0.1.0
+# Zian GUI 0.1.1
 
-- File type: **Release**.
-- Minecraft **1.21.1**, loader **NeoForge**, Java **21**. Install the same JAR on client and server.
-- Main file: `zian-gui-0.1.0.jar`. Upload the JAR, not a documentation ZIP.
-- Current description: [description.md](docs/releases/0.1.0/description.md).
-- Current changes: [changelog.md](docs/releases/0.1.0/changelog.md).
-- Current requirements and commands: [README](README.md).
-- Artifact checksum and validation: [artifact.json](docs/releases/0.1.0/artifact.json).
+Minecraft 1.21.1 / NeoForge / Java 21. Client and server.
 
-External dependencies are listed in the README; do not bundle them in the uploaded file. Updating this GitHub documentation does not change an existing CurseForge listing automatically.
+Upload `zian-gui-0.1.1.jar` (the JAR, not the documentation ZIP).
+
+- [Description](docs/releases/0.1.1/description.md)
+- [Changelog](docs/releases/0.1.1/changelog.md)
+- [Artifact and dependencies](docs/releases/0.1.1/artifact.json)
+
+Web submission status is recorded separately; this document does not confirm an upload.

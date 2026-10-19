@@ -54,3 +54,8 @@ tasks.named('jar', Jar) {
         attributes('Implementation-Title': mod_name, 'Implementation-Version': mod_version)
     }
 }
+
+neoForge.runs {
+ clientSmoke { client(); gameDirectory=project.file('build/gui-visual-smoke'); systemProperty 'ziangui.visualSmoke','true'; programArguments.addAll('--width','1920','--height','1080'); jvmArgument '-Xmx2G' }
+}
+tasks.named('runClientSmoke') { doFirst { project.delete(project.file('build/gui-visual-smoke/visual-result.txt')) }; doLast { def receipt=project.file('build/gui-visual-smoke/visual-result.txt'); if(!receipt.isFile() || !receipt.getText('UTF-8').startsWith('PASS:')) throw new GradleException('GUI visual checks failed; inspect visual-result.txt and screenshots.') } }

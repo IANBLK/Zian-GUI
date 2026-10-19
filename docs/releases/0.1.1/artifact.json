@@ -1,0 +1,32 @@
+{
+  "name": "Zian GUI",
+  "projectId": 1727776,
+  "version": "0.1.1",
+  "jar": "zian-gui-0.1.1.jar",
+  "sha256": "8d8aeb5937109711152d05f236488aa6f0ca10efa557b4ca6e5d4c87b839a615",
+  "dependencies": {
+    "ziangui": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.228,21.2)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ]
+  },
+  "license": "MIT",
+  "uploaded": true,
+  "descriptionVerified": true,
+  "fileId": 9252499,
+  "authorFileUrl": "https://authors.curseforge.com/#/projects/1727776/files/9252499",
+  "status": "Under Review",
+  "verifiedAt": "2026-10-19T05:23:22.214092+00:00"
+}

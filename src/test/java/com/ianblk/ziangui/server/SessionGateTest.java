@@ -27,12 +27,12 @@ class SessionGateTest {
     @Test void reopeningDoesNotBypassActionCooldownAndLogoutClearsState() {
         var gate = new SessionGate(); var player = UUID.randomUUID();
         assertTrue(gate.request(player, 0));
-        assertFalse(gate.request(player, 499));
-        assertTrue(gate.request(player, 500));
+        assertFalse(gate.request(player, 149));
+        assertTrue(gate.request(player, 150));
         assertTrue(gate.action(player, 0));
         gate.open(player, "principal", 5, 50);
-        assertFalse(gate.action(player, 999));
-        assertTrue(gate.action(player, 1000));
+        assertFalse(gate.action(player, 149));
+        assertTrue(gate.action(player, 150));
         gate.remove(player);
         assertFalse(gate.valid(player, "principal", 5, 1001));
         assertTrue(gate.request(player, 1001));

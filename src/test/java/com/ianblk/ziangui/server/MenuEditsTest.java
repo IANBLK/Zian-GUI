@@ -37,6 +37,13 @@ class MenuEditsTest {
         assertThrows(IllegalArgumentException.class, () -> MenuEdits.apply(original(), "heal", false, "heal", "Test", "minecraft:apple", "spawn", "*", 1));
         assertThrows(IllegalArgumentException.class, () -> MenuEdits.apply(original(), "heal", false, "heal", "Test", "minecraft:apple", "spawn", "", 3));
     }
+    @Test void generatedIdsAreStableSafeAndUnique(){
+        var first=MenuEdits.apply(original(),"",false,"","Mi refugio","minecraft:bed","spawn","",1);
+        assertEquals("mi_refugio",first.buttons().getFirst().id());
+        var second=MenuEdits.apply(first,"",false,"","Mi refugio","minecraft:bed","spawn","",2);
+        assertEquals("mi_refugio_1",second.buttons().get(1).id());
+        assertEquals(second,MenuConfig.parse(MenuConfig.json(second)));
+    }
     private MenuConfig load() throws Exception {
         Files.writeString(directory.resolve("custom-file.json"), MenuConfig.json(original()));
         var config = new MenuConfig(); config.reload(directory); return config;

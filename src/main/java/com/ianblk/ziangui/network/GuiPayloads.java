@@ -24,9 +24,10 @@ public final class GuiPayloads {
         public OpenRequest { menuId = id(menuId); }
         public Type<OpenRequest> type() { return TYPE; }
     }
-    public record ButtonView(String id, String label, String icon, boolean enabled) {
+    public record ButtonView(String id, String label, String icon, boolean enabled, String requirement) {
+        public ButtonView(String id,String label,String icon,boolean enabled){this(id,label,icon,enabled,"");}
         public ButtonView {
-            id = GuiPayloads.id(id);
+            id = GuiPayloads.id(id); requirement=requirement==null?"":requirement; if(requirement.length()>160)throw new IllegalArgumentException("Invalid requirement");
             if (label == null || label.length() > 64 || icon == null || icon.length() > 128)
                 throw new IllegalArgumentException("Invalid button view");
         }
@@ -37,14 +38,14 @@ public final class GuiPayloads {
             (buf, p) -> {
                 buf.writeUtf(p.menuId, 32); buf.writeLong(p.session); buf.writeUtf(p.title, 64); buf.writeVarInt(p.buttons.size());
                 for (var b : p.buttons) {
-                    buf.writeUtf(b.id, 32); buf.writeUtf(b.label, 64); buf.writeUtf(b.icon, 128); buf.writeBoolean(b.enabled);
+                    buf.writeUtf(b.id, 32); buf.writeUtf(b.label, 64); buf.writeUtf(b.icon, 128); buf.writeBoolean(b.enabled); buf.writeUtf(b.requirement,160);
                 }
                 buf.writeBoolean(p.editable);
             }, buf -> {
                 String menu = buf.readUtf(32); long session = buf.readLong(); String title = buf.readUtf(64); int count = buf.readVarInt();
                 if (count < 0 || count > 24) throw new IllegalArgumentException("Invalid button count");
                 var buttons = new java.util.ArrayList<ButtonView>(count);
-                for (int i = 0; i < count; i++) buttons.add(new ButtonView(buf.readUtf(32), buf.readUtf(64), buf.readUtf(128), buf.readBoolean()));
+                for (int i = 0; i < count; i++) buttons.add(new ButtonView(buf.readUtf(32), buf.readUtf(64), buf.readUtf(128), buf.readBoolean(), buf.readUtf(160)));
                 return new OpenMenu(menu, session, title, buttons, buf.readBoolean());
             });
         public OpenMenu {

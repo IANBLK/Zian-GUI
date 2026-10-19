@@ -36,7 +36,7 @@ public final class MenuManager {
             .then(Commands.literal("open").executes(ctx -> openCommand(ctx.getSource()))
                 .then(Commands.argument("menu", StringArgumentType.word())
                     .suggests((ctx, builder) -> {
-                        CONFIG.menus().keySet().forEach(builder::suggest); return builder.buildFuture();
+                        CONFIG.menus().values().stream().filter(m -> ctx.getSource().getEntity() instanceof ServerPlayer p && PermissionService.allows(p,m.permission())).map(MenuConfig.Menu::id).forEach(builder::suggest); return builder.buildFuture();
                     })
                     .executes(ctx -> ctx.getSource().getEntity() instanceof ServerPlayer player
                         && open(player, StringArgumentType.getString(ctx, "menu")) ? 1 : 0)))
@@ -44,12 +44,18 @@ public final class MenuManager {
                 && PermissionService.allows(player, "zian.gui.edit"))
                 .executes(ctx -> MenuEditor.open(ctx.getSource().getPlayerOrException(), "principal") ? 1 : 0)
                 .then(Commands.argument("menu", StringArgumentType.word())
-                    .suggests((ctx, builder) -> { CONFIG.menus().keySet().forEach(builder::suggest); return builder.buildFuture(); })
+                    .suggests((ctx, builder) -> { CONFIG.menus().values().stream().filter(m -> ctx.getSource().getEntity() instanceof ServerPlayer p && PermissionService.allows(p,m.permission())).map(MenuConfig.Menu::id).forEach(builder::suggest); return builder.buildFuture(); })
                     .executes(ctx -> MenuEditor.open(ctx.getSource().getPlayerOrException(), StringArgumentType.getString(ctx, "menu")) ? 1 : 0)))
             .then(Commands.literal("reload").requires(source ->
                 source.getEntity() instanceof ServerPlayer player
                     ? PermissionService.allows(player, "zian.gui.reload") : source.hasPermission(2))
                 .executes(ctx -> reload(ctx.getSource()))));
+        registerAliases(event);
+    }
+    public static void registerAliases(RegisterCommandsEvent event){
+        var original=event.getDispatcher().getRoot().getChild(ZianGui.COMMAND_ROOT);
+        if(original!=null&&event.getDispatcher().getRoot().getChild("zgui")==null)
+            event.getDispatcher().register(Commands.literal("zgui").requires(s->true).executes(c->openCommand(c.getSource())).redirect(original));
     }
     public static void onStart(ServerStartingEvent event) {
         CONFIG = new MenuConfig(); GATE.clear(); MenuEditor.clear();
@@ -91,11 +97,14 @@ public final class MenuManager {
         GATE.open(player.getUUID(), menu, nonce, now());
         PacketDistributor.sendToPlayer(player, new GuiPayloads.OpenMenu(menu, nonce, definition.title(), definition.buttons().stream()
             .map(a -> new GuiPayloads.ButtonView(a.id(), a.label(), a.icon(),
-                a.allowed(node -> PermissionService.allows(player, node)))).toList(), PermissionService.allows(player, "zian.gui.edit")));
+                a.allowed(node -> PermissionService.allows(player, node)),a.requirement())).toList(), PermissionService.allows(player, "zian.gui.edit")));
         return true;
     }
     public static void click(ServerPlayer player, GuiPayloads.Click click) {
-        if (!GATE.valid(player.getUUID(), click.menuId(), click.session(), now()) || !GATE.action(player.getUUID(), now())) return;
+        if (!GATE.valid(player.getUUID(), click.menuId(), click.session(), now())) return;
+        if (!GATE.action(player.getUUID(), now())) {
+            PacketDistributor.sendToPlayer(player,new GuiPayloads.Feedback(click.session(),"Espera un instante antes de la siguiente acción."));return;
+        }
         var definition = CONFIG.get(click.menuId());
         if (definition == null) return;
         var action = definition.buttons().stream().filter(a -> a.id().equals(click.buttonId())).findFirst().orElse(null);
@@ -108,9 +117,9 @@ public final class MenuManager {
         // Consume the session before dispatch: replay/spam cannot execute a second command.
         GATE.close(player.getUUID(), click.session());
         PacketDistributor.sendToPlayer(player, new GuiPayloads.Close(click.session()));
-        boolean result = CommandBridge.execute(player, action.command());
-        ZianGui.LOGGER.info("[ZianGUI] action=button playerUuid={} menu={} button={} result={}", player.getUUID(), definition.id(), action.id(), result ? "DISPATCHED" : "NOT_CONFIRMED");
-        if (!result) player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("No se pudo confirmar la ejecución. Revisa los permisos y que el comando exista.")));
+        var result = CommandBridge.executeDetailed(player, action.command());
+        ZianGui.LOGGER.info("[ZianGUI] action=button playerUuid={} menu={} button={} result={}", player.getUUID(), definition.id(), action.id(), result.name());
+        if (result != CommandBridge.Result.DISPATCHED) player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal(result.message)));
     }
     public static void closed(ServerPlayer player, long session) { GATE.close(player.getUUID(), session); }
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) { GATE.remove(event.getEntity().getUUID()); MenuEditor.remove(event.getEntity().getUUID()); }

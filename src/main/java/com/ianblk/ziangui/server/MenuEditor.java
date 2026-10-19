@@ -44,7 +44,7 @@ public final class MenuEditor {
         if (now() >= session.expires) {
             SESSIONS.remove(player.getUUID()); feedback(player, session, "La sesión caducó. Cierra y vuelve a abrir el editor."); return;
         }
-        if (!LIMITS.action(player.getUUID(), now())) { feedback(player, session, "Espera un segundo antes de guardar otra vez."); return; }
+        if (!LIMITS.action(player.getUUID(), now())) { feedback(player, session, "Espera un instante antes de guardar otra vez."); return; }
         if (!PermissionService.allows(player, "zian.gui.edit")) { feedback(player, session, "No tienes permiso para editar menús."); return; }
         try {
             var config = MenuManager.configuration();
@@ -59,6 +59,11 @@ public final class MenuEditor {
             if (!request.delete() && icon.isEmpty()) throw new IllegalArgumentException("Para añadir un botón, selecciona el icono de la mano.");
             var next = MenuEdits.apply(menu, request.existingId(), request.delete(), request.id(), request.name(), icon,
                 request.command(), request.permissions(), request.position());
+            if(!request.delete()){
+                String editedId=next.buttons().get(request.position()-1).id();
+                var buttons=next.buttons().stream().map(a->a.id().equals(editedId)?new MenuConfig.Action(a.id(),a.label(),a.icon(),a.permissions(),a.command(),request.requirement()):a).toList();
+                next=new MenuConfig.Menu(next.id(),next.title(),next.permission(),buttons);
+            }
             config.save(MenuManager.directory(), session.revision, next);
             MenuManager.invalidate(player.server);
             invalidate(player.server);

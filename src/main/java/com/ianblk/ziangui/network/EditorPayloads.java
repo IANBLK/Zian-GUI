@@ -32,16 +32,17 @@ public final class EditorPayloads {
         public Type<Open> type() { return TYPE; }
     }
     public record Change(String menuId, long session, String existingId, boolean delete,
-            String id, String name, String command, String permissions, int position, boolean handIcon) implements CustomPacketPayload {
+            String id, String name, String command, String permissions, int position, boolean handIcon, String requirement) implements CustomPacketPayload {
+        public Change(String menuId,long session,String existingId,boolean delete,String id,String name,String command,String permissions,int position,boolean handIcon){this(menuId,session,existingId,delete,id,name,command,permissions,position,handIcon,"");}
         public static final Type<Change> TYPE = EditorPayloads.type("editor_change");
         public static final StreamCodec<RegistryFriendlyByteBuf, Change> CODEC = StreamCodec.of(
             (b, p) -> { b.writeUtf(p.menuId, 32); b.writeLong(p.session); b.writeUtf(p.existingId, 32); b.writeBoolean(p.delete);
                 b.writeUtf(p.id, 32); b.writeUtf(p.name, 64); b.writeUtf(p.command, 256); b.writeUtf(p.permissions, 1031);
-                b.writeVarInt(p.position); b.writeBoolean(p.handIcon); },
-            b -> new Change(b.readUtf(32), b.readLong(), b.readUtf(32), b.readBoolean(), b.readUtf(32), b.readUtf(64), b.readUtf(256), b.readUtf(1031), b.readVarInt(), b.readBoolean()));
+                b.writeVarInt(p.position); b.writeBoolean(p.handIcon); b.writeUtf(p.requirement,160); },
+            b -> new Change(b.readUtf(32), b.readLong(), b.readUtf(32), b.readBoolean(), b.readUtf(32), b.readUtf(64), b.readUtf(256), b.readUtf(1031), b.readVarInt(), b.readBoolean(), b.readUtf(160)));
         public Change {
             if (!bounded(menuId, 32).matches("[a-z0-9_]{1,32}")) throw new IllegalArgumentException("Invalid menu");
-            bounded(existingId, 32); bounded(id, 32); bounded(name, 64); bounded(command, 256); bounded(permissions, 1031);
+            bounded(existingId, 32); bounded(id, 32); bounded(name, 64); bounded(command, 256); bounded(permissions, 1031); bounded(requirement,160);
             if (position < 1 || position > 24) throw new IllegalArgumentException("Invalid position");
         }
         public Type<Change> type() { return TYPE; }

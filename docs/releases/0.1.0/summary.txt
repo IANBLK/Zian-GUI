@@ -1,1 +1,0 @@
-Configurable native command menu with an in-game editor, item icons, per-button permissions and responsive pages. Minecraft 1.21.1 / NeoForge; client and server.

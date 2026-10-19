@@ -12,7 +12,7 @@ public final class SessionGate {
     private final Map<UUID, Long> nextAction = new HashMap<>();
     public boolean request(UUID player, long now) {
         if (now < nextRequest.getOrDefault(player, Long.MIN_VALUE)) return false;
-        nextRequest.put(player, now + 500); return true;
+        nextRequest.put(player, now + 150); return true;
     }
     public void open(UUID player, String menu, long nonce, long now) {
         sessions.put(player, new Session(menu, nonce, now + 300_000));
@@ -23,7 +23,7 @@ public final class SessionGate {
     }
     public boolean action(UUID player, long now) {
         if (now < nextAction.getOrDefault(player, Long.MIN_VALUE)) return false;
-        nextAction.put(player, now + 1000); return true;
+        nextAction.put(player, now + 150); return true;
     }
     public void close(UUID player, long nonce) {
         var s = sessions.get(player);

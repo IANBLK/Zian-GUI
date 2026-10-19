@@ -14,7 +14,7 @@ public final class GuiNetwork {
     private GuiNetwork() {}
     public static void register(RegisterPayloadHandlersEvent event) {
         // Required on both endpoints: do not use optional() on this registrar.
-        var r = event.registrar("3");
+        var r = event.registrar("4");
         r.playToServer(EditorPayloads.Request.TYPE, EditorPayloads.Request.CODEC,
             (p, ctx) -> ctx.enqueueWork(() -> {
                 if (ctx.player() instanceof ServerPlayer player) com.ianblk.ziangui.server.MenuEditor.open(player, p.menuId());
