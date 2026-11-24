@@ -40,7 +40,7 @@
   "ziangui.command.unconfirmed": "We could not confirm the action. Do not repeat it if it may have used items or coins; ask an administrator.",
   "ziangui.command.reloaded": "Zian GUI: %s menu(s) reloaded. Previous screens were closed.",
   "ziangui.command.reload_failed": "Reload not applied: %s",
-  "ziangui.command.in_game": "Open Zian GUI from in game.",
+  "ziangui.command.in_game": "Open Zian GUI in game.",
   "ziangui.menu.missing": "Menu not found or invalid configuration.",
   "ziangui.menu.no_permission": "You do not have permission to open this menu.",
   "ziangui.menu.client_version": "Install the same Zian GUI version on the client.",
@@ -54,6 +54,6 @@
   "ziangui.editor.menu_changed": "The menu changed; reopen the editor.",
   "ziangui.editor.hand_empty": "Hold the icon item in your main hand when saving.",
   "ziangui.editor.need_icon": "To add a button, pick the icon from your hand.",
-  "ziangui.editor.saved": "Saved. Backup: the menu file .json.bak",
+  "ziangui.editor.saved": "Saved. Backup: menu .json.bak file",
   "ziangui.editor.rejected": "Not saved: %s"
 }
