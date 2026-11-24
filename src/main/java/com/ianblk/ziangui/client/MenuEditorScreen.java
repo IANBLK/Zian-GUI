@@ -30,7 +30,7 @@ public final class MenuEditorScreen extends ResponsiveScreen {
     }
     public MenuEditorScreen(EditorPayloads.Open data) {
         super(Component.translatableWithFallback("ui.ziangui.858f785a9c06", "Zian GUI · Editor"));
-        this.data = data; this.menu = MenuConfig.parse(data.json()); this.feedback = Component.literal(data.message());
+        this.data = data; this.menu = MenuConfig.parse(data.json()); this.feedback = data.message();
     }
     public long session() { return data.session(); }
     public void feedback(Component message) { feedback = message; pending = false; deleteConfirmed = false; rebuildWidgets(); }
@@ -87,7 +87,7 @@ public final class MenuEditorScreen extends ResponsiveScreen {
         hand.active = !pending;
         int w = Math.min(104, (panelWidth - 40) / 3), y = top + panelHeight - 28;
         var back = button(width / 2 - w * 3 / 2 - 8, y, w, Component.translatableWithFallback("ui.ziangui.84a715a785a9", "Volver"), b -> {
-            draft = null; deleteConfirmed = false; feedback = Component.literal(data.message()); rebuildWidgets();
+            draft = null; deleteConfirmed = false; feedback = data.message(); rebuildWidgets();
         }); back.active = !pending;
         var remove = button(width / 2 - w / 2, y, w, deleteConfirmed ? Component.translatableWithFallback("ziangui.editor.delete_confirm", "¿Eliminar?") : Component.translatableWithFallback("ziangui.editor.delete", "Eliminar"), b -> {
             if (!deleteConfirmed) { deleteConfirmed = true; feedback = Component.translatableWithFallback("ziangui.editor.feedback.confirm_delete", "Pulsa ¿Eliminar? para confirmar."); rebuildWidgets(); }

@@ -1,13 +1,14 @@
 package com.ianblk.ziangui.server;
 import com.ianblk.ziangui.ZianGui;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 public final class CommandBridge {
  public enum Result {
-  DISPATCHED(""), DENIED("No tienes acceso a esta función. Consulta los requisitos de tu rango."),
-  MISSING("Este destino no está disponible. Informa al administrador."),
-  UNAVAILABLE("El servicio de comandos no está disponible. Inténtalo cuando se restablezca."),
-  UNCONFIRMED("No pudimos confirmar la acción. No la repitas si pudo consumir objetos o monedas; consulta al administrador.");
-  public final String message;Result(String message){this.message=message;}
+  DISPATCHED(Component.empty()), DENIED(Component.translatableWithFallback("ziangui.command.denied", "No tienes acceso a esta función. Consulta los requisitos de tu rango.")),
+  MISSING(Component.translatableWithFallback("ziangui.command.missing", "Este destino no está disponible. Informa al administrador.")),
+  UNAVAILABLE(Component.translatableWithFallback("ziangui.command.unavailable", "El servicio de comandos no está disponible. Inténtalo cuando se restablezca.")),
+  UNCONFIRMED(Component.translatableWithFallback("ziangui.command.unconfirmed", "No pudimos confirmar la acción. No la repitas si pudo consumir objetos o monedas; consulta al administrador."));
+  public final Component message;Result(Component message){this.message=message;}
  }
  private CommandBridge(){}
  public static boolean execute(ServerPlayer p,String command){return executeDetailed(p,command)==Result.DISPATCHED;}
