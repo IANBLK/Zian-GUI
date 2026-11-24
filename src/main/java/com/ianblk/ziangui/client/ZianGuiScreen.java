@@ -16,7 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /** Local adaptation of the Zian RCT charcoal/gold card style; no dependency on RCT. */
 public final class ZianGuiScreen extends ResponsiveScreen {
     private final GuiPayloads.OpenMenu menu;
-    private String feedback = "";
+    private Component feedback = Component.empty();
     private boolean pending;
     private long submittedAt;
     private static final java.util.Map<String,Integer> LAST_PAGE=new java.util.HashMap<>();
@@ -32,7 +32,7 @@ public final class ZianGuiScreen extends ResponsiveScreen {
     public boolean wasSubmitted(){return pending;}
     public String menuId(){return menu.menuId();}
     public long session() { return menu.session(); }
-    public void feedback(String text) { feedback = text; pending=false; rebuildWidgets(); }
+    public void feedback(Component text) { feedback = text; pending=false; rebuildWidgets(); }
     @Override protected void init() {fitViewport(440,330);
         panelWidth = Math.min(304, width - 16);
         int rowsPerPage = Math.max(1, Math.min(6, (height - 16 - 108) / 38));
@@ -68,13 +68,13 @@ public final class ZianGuiScreen extends ResponsiveScreen {
     }
     private void submit(GuiPayloads.ButtonView view){
         if(pending)return;
-        if(!view.enabled()){feedback=view.requirement().isBlank()?"Esta función está bloqueada. Consulta los requisitos de tu rango.":view.requirement();return;}
-        pending=true;submittedAt=System.nanoTime();feedback="Esperando al servidor…";
+        if(!view.enabled()){feedback=view.requirement().isBlank()?Component.translatableWithFallback("ziangui.feedback.locked", "Esta función está bloqueada. Consulta los requisitos de tu rango."):Component.literal(view.requirement());return;}
+        pending=true;submittedAt=System.nanoTime();feedback=Component.translatableWithFallback("ziangui.feedback.waiting", "Esperando al servidor…");
         PacketDistributor.sendToServer(new GuiPayloads.Click(menu.menuId(),view.id(),menu.session()));
     }
     @Override public void tick(){
         if(pending&&System.nanoTime()-submittedAt>5_000_000_000L)
-            feedback="La respuesta está tardando. Cierra y vuelve a abrir para consultar el estado.";
+            feedback=Component.translatableWithFallback("ziangui.feedback.slow", "La respuesta está tardando. Cierra y vuelve a abrir para consultar el estado.");
     }
     @Override public boolean isPauseScreen() { return false; }
     @Override public void renderBackground(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
@@ -88,7 +88,7 @@ public final class ZianGuiScreen extends ResponsiveScreen {
         String heading = menu.title() + (pages > 1 ? " · " + (page + 1) + "/" + pages : "");
         if (font.width(heading) > panelWidth - 24) heading = font.plainSubstrByWidth(heading, panelWidth - 36) + "…";
         graphics.drawCenteredString(font, Component.literal(heading), width / 2, top + 30, 0xFFAAAAAA);
-        if (!feedback.isEmpty()) graphics.drawWordWrap(font, Component.literal(feedback), left + 12,
+        if (!feedback.getString().isEmpty()) graphics.drawWordWrap(font, feedback, left + 12,
             top + panelHeight - 54, panelWidth - 24, 0xFFFFAA55);
         renderWidgets(graphics, mouseX, mouseY, partialTick);
     }
@@ -124,7 +124,7 @@ public final class ZianGuiScreen extends ResponsiveScreen {
             ResourceLocation id = ResourceLocation.tryParse(view.icon());
             this.icon = new ItemStack(id != null && BuiltInRegistries.ITEM.containsKey(id)
                 ? BuiltInRegistries.ITEM.get(id) : Items.BARRIER);
-            setTooltip(Tooltip.create(Component.literal(view.label()+(view.requirement().isBlank()?(view.enabled()?"":" · Bloqueado: consulta los requisitos de tu rango."):" · "+view.requirement()))));
+            setTooltip(Tooltip.create(Component.literal(view.label()+(view.requirement().isBlank()?(view.enabled()?"":" · "+Component.translatableWithFallback("ziangui.tooltip.locked", "Bloqueado: consulta los requisitos de tu rango.").getString()):" · "+view.requirement()))));
         }
         @Override protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             frame(graphics, view.enabled());
