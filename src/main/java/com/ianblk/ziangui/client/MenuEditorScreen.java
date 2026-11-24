@@ -120,7 +120,7 @@ public final class MenuEditorScreen extends ResponsiveScreen {
             g.renderItem(icon, left + 12, top + 40 + 6 * rowHeight);
         }
         var lines = font.split(feedback, panelWidth - 24);
-        for (int i = 0; i < Math.min(2, lines.size()); i++) g.drawString(font, lines.get(i), left + 12, (draft != null ? top + 38 + 6 * rowHeight + 23 : top + panelHeight - 54) + i * 10, 0xFFFFCC66);
+        int shown = Math.min(2, lines.size()); // en la ficha, centrado entre el boton del icono y los botones de abajo; en la lista, sobre los botones de abajo int from = draft != null ? top + 38 + 6 * rowHeight + 20 : top + panelHeight - 58, to = top + panelHeight - 28; int textY = from + Math.max(0, (to - from - shown * 10) / 2); for (int i = 0; i < shown; i++) g.drawString(font, lines.get(i), left + (panelWidth - font.width(lines.get(i))) / 2, textY + i * 10, 0xFFFFCC66);
         renderWidgets(g, x, y, tick);
     }
     @Override public void removed() {
