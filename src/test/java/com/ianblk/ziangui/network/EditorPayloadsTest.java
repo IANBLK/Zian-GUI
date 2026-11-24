@@ -17,7 +17,7 @@ class EditorPayloadsTest {
         assertThrows(IllegalArgumentException.class, () -> new EditorPayloads.Change("principal", 1, "", false, "id", "n", "x".repeat(257), "", 1, true));
         assertThrows(IllegalArgumentException.class, () -> new EditorPayloads.Change("principal", 1, "", false, "id", "n", "spawn\nop test", "", 1, true));
         assertThrows(IllegalArgumentException.class, () -> new EditorPayloads.Change("principal", 1, "", false, "id", "n", "spawn", "", 25, true));
-        assertThrows(IllegalArgumentException.class, () -> new EditorPayloads.Open(1, "x".repeat(65537), ""));
+        assertThrows(IllegalArgumentException.class, () -> new EditorPayloads.Open(1, "x".repeat(65537), net.minecraft.network.chat.Component.empty()));
     }
     @Test void rejectsOversizedCommandDuringDecoding() {
         var buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY);

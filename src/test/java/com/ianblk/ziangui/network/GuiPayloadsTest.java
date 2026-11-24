@@ -20,7 +20,7 @@ class GuiPayloadsTest {
     @Test void rejectsCommandInjectionAndOversizedIdentifiers() {
         assertThrows(IllegalArgumentException.class, () -> new GuiPayloads.Click("principal", "spawn;op player", 1));
         assertThrows(IllegalArgumentException.class, () -> new GuiPayloads.OpenRequest("x".repeat(33)));
-        assertThrows(IllegalArgumentException.class, () -> new GuiPayloads.Feedback(1, "x".repeat(257)));
+        assertThrows(IllegalArgumentException.class, () -> new GuiPayloads.Feedback(1, null));
     }
     @Test void decoderRejectsOversizedButtonListBeforeAllocating() {
         var buf = new RegistryFriendlyByteBuf(Unpooled.buffer(), RegistryAccess.EMPTY);
