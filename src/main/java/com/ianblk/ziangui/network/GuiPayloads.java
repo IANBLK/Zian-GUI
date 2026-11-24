@@ -76,13 +76,13 @@ public final class GuiPayloads {
             (buf, p) -> buf.writeLong(p.session), buf -> new Close(buf.readLong()));
         public Type<Close> type() { return TYPE; }
     }
-    public record Feedback(long session, String text) implements CustomPacketPayload {
+    public record Feedback(long session, net.minecraft.network.chat.Component text) implements CustomPacketPayload {
         public static final Type<Feedback> TYPE = GuiPayloads.type("feedback");
         public static final StreamCodec<RegistryFriendlyByteBuf, Feedback> CODEC = StreamCodec.of(
-            (buf, p) -> { buf.writeLong(p.session); buf.writeUtf(p.text, 256); },
-            buf -> new Feedback(buf.readLong(), buf.readUtf(256)));
+            (buf, p) -> { buf.writeLong(p.session); net.minecraft.network.chat.ComponentSerialization.STREAM_CODEC.encode(buf, p.text); },
+            buf -> new Feedback(buf.readLong(), net.minecraft.network.chat.ComponentSerialization.STREAM_CODEC.decode(buf)));
         public Feedback {
-            if (text == null || text.length() > 256) throw new IllegalArgumentException("Invalid feedback");
+            if (text == null) throw new IllegalArgumentException("Invalid feedback");
         }
         public Type<Feedback> type() { return TYPE; }
     }

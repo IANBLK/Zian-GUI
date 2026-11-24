@@ -42,7 +42,7 @@ public final class ZianGuiClient {
             var mc = Minecraft.getInstance();
             if (mc.screen instanceof ZianGuiScreen screen && screen.session() == p.session()) screen.feedback(p.text());
             else if (mc.screen instanceof MenuEditorScreen screen && screen.session() == p.session()) screen.feedback(p.text());
-            else if (mc.player != null) mc.player.displayClientMessage(net.minecraft.network.chat.Component.literal(p.text()), false);
+            else if (mc.player != null) mc.player.displayClientMessage(p.text(), false);
         };
     }
     private static void tick(ClientTickEvent.Post event) {

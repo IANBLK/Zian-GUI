@@ -23,12 +23,12 @@ public final class EditorPayloads {
         public Request { if (!bounded(menuId, 32).matches("[a-z0-9_]{1,32}")) throw new IllegalArgumentException("Invalid menu"); }
         public Type<Request> type() { return TYPE; }
     }
-    public record Open(long session, String json, String message) implements CustomPacketPayload {
+    public record Open(long session, String json, net.minecraft.network.chat.Component message) implements CustomPacketPayload {
         public static final Type<Open> TYPE = EditorPayloads.type("editor_open");
         public static final StreamCodec<RegistryFriendlyByteBuf, Open> CODEC = StreamCodec.of(
-            (b, p) -> { b.writeLong(p.session); b.writeUtf(p.json, 65536); b.writeUtf(p.message, 256); },
-            b -> new Open(b.readLong(), b.readUtf(65536), b.readUtf(256)));
-        public Open { if (json == null || json.length() > 65536) throw new IllegalArgumentException("Editor menu too large"); bounded(message, 256); }
+            (b, p) -> { b.writeLong(p.session); b.writeUtf(p.json, 65536); net.minecraft.network.chat.ComponentSerialization.STREAM_CODEC.encode(b, p.message); },
+            b -> new Open(b.readLong(), b.readUtf(65536), net.minecraft.network.chat.ComponentSerialization.STREAM_CODEC.decode(b)));
+        public Open { if (json == null || json.length() > 65536) throw new IllegalArgumentException("Editor menu too large"); if (message == null) throw new IllegalArgumentException("Invalid editor message"); }
         public Type<Open> type() { return TYPE; }
     }
     public record Change(String menuId, long session, String existingId, boolean delete,

@@ -66,18 +66,17 @@ public final class MenuManager {
         try {
             CONFIG.reload(FMLPaths.CONFIGDIR.get().resolve("zian_gui/menus"));
             invalidate(source.getServer()); MenuEditor.invalidate(source.getServer());
-            source.sendSuccess(() -> Component.literal("Zian GUI: " + CONFIG.menus().size()
-                + " menú(s) recargados. Las pantallas anteriores se cerraron."), true);
+            source.sendSuccess(() -> Component.translatableWithFallback("ziangui.command.reloaded", "Zian GUI: %s menú(s) recargados. Las pantallas anteriores se cerraron.", CONFIG.menus().size()), true);
             return 1;
         } catch (java.io.IOException error) {
-            source.sendFailure(Component.literal("No se aplicó la recarga: " + error.getMessage()));
+            source.sendFailure(Component.translatableWithFallback("ziangui.command.reload_failed", "No se aplicó la recarga: %s", error.getMessage()));
             ZianGui.LOGGER.warn("[ZianGUI] Recarga rechazada: {}", error.getMessage());
             return 0;
         }
     }
     private static int openCommand(net.minecraft.commands.CommandSourceStack source) {
         if (!(source.getEntity() instanceof ServerPlayer player)) {
-            source.sendFailure(Component.literal("Abre Zian GUI desde el juego.")); return 0;
+            source.sendFailure(Component.translatableWithFallback("ziangui.command.in_game", "Abre Zian GUI desde el juego.")); return 0;
         }
         return open(player, "principal") ? 1 : 0;
     }
@@ -85,13 +84,13 @@ public final class MenuManager {
         if (!GATE.request(player.getUUID(), now())) return false;
         var definition = CONFIG.get(menu);
         if (definition == null) {
-            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("Menú inexistente o configuración inválida."))); return false;
+            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.translatableWithFallback("ziangui.menu.missing", "Menú inexistente o configuración inválida."))); return false;
         }
         if (!PermissionService.allows(player, "zian.gui.open") || !PermissionService.allows(player, definition.permission())) {
-            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("No tienes permiso para abrir este menú."))); return false;
+            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.translatableWithFallback("ziangui.menu.no_permission", "No tienes permiso para abrir este menú."))); return false;
         }
         if (!NetworkRegistry.hasChannel(player.connection, GuiPayloads.OpenMenu.TYPE.id())) {
-            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal("Instala la misma versión de Zian GUI en el cliente."))); return false;
+            player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.translatableWithFallback("ziangui.menu.client_version", "Instala la misma versión de Zian GUI en el cliente."))); return false;
         }
         long nonce = ThreadLocalRandom.current().nextLong();
         GATE.open(player.getUUID(), menu, nonce, now());
@@ -103,7 +102,7 @@ public final class MenuManager {
     public static void click(ServerPlayer player, GuiPayloads.Click click) {
         if (!GATE.valid(player.getUUID(), click.menuId(), click.session(), now())) return;
         if (!GATE.action(player.getUUID(), now())) {
-            PacketDistributor.sendToPlayer(player,new GuiPayloads.Feedback(click.session(),"Espera un instante antes de la siguiente acción."));return;
+            PacketDistributor.sendToPlayer(player,new GuiPayloads.Feedback(click.session(),Component.translatableWithFallback("ziangui.feedback.wait_action", "Espera un instante antes de la siguiente acción.")));return;
         }
         var definition = CONFIG.get(click.menuId());
         if (definition == null) return;
@@ -111,7 +110,7 @@ public final class MenuManager {
         if (action == null) return;
         if (!PermissionService.allows(player, "zian.gui.open") || !PermissionService.allows(player, definition.permission())
             || !action.allowed(node -> PermissionService.allows(player, node))) {
-            PacketDistributor.sendToPlayer(player, new GuiPayloads.Feedback(click.session(), "No tienes permiso para usar este botón."));
+            PacketDistributor.sendToPlayer(player, new GuiPayloads.Feedback(click.session(), Component.translatableWithFallback("ziangui.feedback.no_button_permission", "No tienes permiso para usar este botón.")));
             return;
         }
         // Consume the session before dispatch: replay/spam cannot execute a second command.
@@ -119,7 +118,7 @@ public final class MenuManager {
         PacketDistributor.sendToPlayer(player, new GuiPayloads.Close(click.session()));
         var result = CommandBridge.executeDetailed(player, action.command());
         ZianGui.LOGGER.info("[ZianGUI] action=button playerUuid={} menu={} button={} result={}", player.getUUID(), definition.id(), action.id(), result.name());
-        if (result != CommandBridge.Result.DISPATCHED) player.sendSystemMessage(com.ianblk.ziangui.Messages.format(Component.literal(result.message)));
+        if (result != CommandBridge.Result.DISPATCHED) player.sendSystemMessage(com.ianblk.ziangui.Messages.format(result.message));
     }
     public static void closed(ServerPlayer player, long session) { GATE.close(player.getUUID(), session); }
     public static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) { GATE.remove(event.getEntity().getUUID()); MenuEditor.remove(event.getEntity().getUUID()); }
