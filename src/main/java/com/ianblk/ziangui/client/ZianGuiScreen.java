@@ -54,7 +54,7 @@ public final class ZianGuiScreen extends ResponsiveScreen {
                 top + 48 + (i / 2) * (cardHeight + 8), cardWidth, cardHeight, view,
                 button -> submit(view)));
         }
-        addRenderableWidget(new ThemedButton(width / 2 + 6, top + panelHeight - 30, 96, 20,
+        addRenderableWidget(new ThemedButton(HISTORY.size() > 1 ? width / 2 + 6 : width / 2 - 48, top + panelHeight - 30, 96, 20,
             Component.translatableWithFallback("ui.ziangui.4b0816bbd5e9", "Cerrar"), button -> onClose()));
         if(HISTORY.size()>1)addRenderableWidget(new ThemedButton(width/2-102,top+panelHeight-30,96,20,Component.translatableWithFallback("ui.ziangui.84a715a785a9", "Volver"),b->{HISTORY.removeLast();PacketDistributor.sendToServer(new GuiPayloads.OpenRequest(HISTORY.peekLast()));}));
         if (pages > 1) {
