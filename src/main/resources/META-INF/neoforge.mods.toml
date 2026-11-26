@@ -15,7 +15,7 @@ description='''Configurable native menus with responsive layouts, permission che
 [[dependencies.ziangui]]
 modId="neoforge"
 type="required"
-versionRange="[${neo_version},21.2)"
+versionRange="[21.1.228,21.2)"
 ordering="NONE"
 side="BOTH"
 
